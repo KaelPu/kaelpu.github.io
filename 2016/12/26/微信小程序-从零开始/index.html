@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="今天一不小心拿到了小程序的内测资格，为了不辜负微信团队的信任，我决定十一奋斗一把！不过话说我可是一个Android工程师啊！所以就让我们从零开始！所以本文非常适合非前端工程师学习！哈哈！都说小程序出来前端会抢移动端饭碗，但是据我所知现在好多学习的都是移动开发工程师，谁抢谁的还不一定呢！PS：表问我怎么拿到小程序内测资格的，有种东西叫内部资源！    准备工作 IDE搭建 知识准备   从零开始 a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信小程序-从零开始">
+<meta property="og:url" content="http://www.puwenhui.com/2016/12/26/微信小程序-从零开始/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="今天一不小心拿到了小程序的内测资格，为了不辜负微信团队的信任，我决定十一奋斗一把！不过话说我可是一个Android工程师啊！所以就让我们从零开始！所以本文非常适合非前端工程师学习！哈哈！都说小程序出来前端会抢移动端饭碗，但是据我所知现在好多学习的都是移动开发工程师，谁抢谁的还不一定呢！PS：表问我怎么拿到小程序内测资格的，有种东西叫内部资源！    准备工作 IDE搭建 知识准备   从零开始 a">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-cabafd91e6a209f5.jpg">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-f7341447bbf8c3e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-597080e04f2b3e3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-b2fb6cf009b3f669.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-97168faa092d6361.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-d5077071bec29f39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-4cfa70645ebb7af1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-6d43ae0c0f482b2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-61458d7fbae5b96d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-24e2d7cc79c3ce74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-fa75af3580fed8e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-aa0cbe195153b022.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-2b33ef3cb7901246.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-bbb06aa246598eaa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-394640c62d5a08fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-e0e007a06b654cc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1967257-f28a18cdb0f96d7e.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.442Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微信小程序-从零开始">
+<meta name="twitter:description" content="今天一不小心拿到了小程序的内测资格，为了不辜负微信团队的信任，我决定十一奋斗一把！不过话说我可是一个Android工程师啊！所以就让我们从零开始！所以本文非常适合非前端工程师学习！哈哈！都说小程序出来前端会抢移动端饭碗，但是据我所知现在好多学习的都是移动开发工程师，谁抢谁的还不一定呢！PS：表问我怎么拿到小程序内测资格的，有种东西叫内部资源！    准备工作 IDE搭建 知识准备   从零开始 a">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1967257-cabafd91e6a209f5.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2016/12/26/微信小程序-从零开始/">
+
+
+
+
+
+  <title>微信小程序-从零开始 | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2016/12/26/微信小程序-从零开始/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">微信小程序-从零开始</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-12-26T20:45:40+08:00">
+                2016-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天一不小心拿到了小程序的内测资格，为了不辜负微信团队的信任，我决定十一奋斗一把！不过话说我可是一个Android工程师啊！所以就让我们从零开始！所以本文非常适合非前端工程师学习！哈哈！都说小程序出来前端会抢移动端饭碗，但是据我所知现在好多学习的都是移动开发工程师，谁抢谁的还不一定呢！PS：表问我怎么拿到小程序内测资格的，有种东西叫内部资源！</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>准备工作<ul>
+<li>IDE搭建</li>
+<li>知识准备</li>
+</ul>
+</li>
+<li>从零开始<ul>
+<li>app.js</li>
+<li>app.json</li>
+<li>app.wxml</li>
+<li>app.wxss</li>
+</ul>
+</li>
+<li>Hello World<ul>
+<li>创建程序实例</li>
+<li>美化ActionBar</li>
+<li>美化页面</li>
+<li>配置首页</li>
+</ul>
+</li>
+<li>超级Hello World<ul>
+<li>事件绑定函数</li>
+<li>更新界面数据</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="IDE搭建"><a href="#IDE搭建" class="headerlink" title="IDE搭建"></a>IDE搭建</h2><p>就不多说了，没有内测码去下载个破解版吧，我用了一下，学习完全够了！<a href="https://github.com/gavinkwoe/weapp-ide-crack" target="_blank" rel="noopener">IDE破解版+安装教程</a><br><img src="http://upload-images.jianshu.io/upload_images/1967257-cabafd91e6a209f5.jpg" alt="图片发自简书App"></p>
+<hr>
+<h2 id="知识准备"><a href="#知识准备" class="headerlink" title="知识准备"></a>知识准备</h2><p>JavaScrip还是要看看的，推荐教程 <a href="http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000" target="_blank" rel="noopener">廖雪峰大神的博客</a><br>HTML+CSS 大概知道是干啥的就行</p>
+<hr>
+<h1 id="从零开始"><a href="#从零开始" class="headerlink" title="从零开始"></a>从零开始</h1><h2 id="微信小程序中就四种类型的文件"><a href="#微信小程序中就四种类型的文件" class="headerlink" title="微信小程序中就四种类型的文件"></a>微信小程序中就四种类型的文件</h2><blockquote>
+<ul>
+<li>js  ———-  JavaScrip文件</li>
+<li>json ——– 项目配置文件，负责窗口颜色等等</li>
+<li>wxml ——-  类似HTML文件</li>
+<li>wxss ——-  类似CSS文件</li>
+</ul>
+</blockquote>
+<p>在根目录下用app来命名的这四中类型的文件，就是程序入口文件。</p>
+<h3 id="app-json"><a href="#app-json" class="headerlink" title="app.json"></a>app.json</h3><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口  背景色，配置导航条样式，配置默认标题。</p>
+<h3 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h3><p>必须要有这个文件，没有也是会报错！但是这个文件创建一下就行 什么都不需要写<br>以后我们可以在这个文件中监听并处理小程序的生命周期函数、声明全局变量。</p>
+<h3 id="app-wxss"><a href="#app-wxss" class="headerlink" title="app.wxss"></a>app.wxss</h3><p>这个文件不是必须的。因为它只是个全局CSS样式文件</p>
+<h3 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h3><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
+<p><strong>有了这两个文件你运行程序，IDE就不会报错了，也意味着这是最简单的微信小程序</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-f7341447bbf8c3e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<hr>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h2><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'App Launch'</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'App Show'</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'App Hide'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>具体API解释如下<br><img src="http://upload-images.jianshu.io/upload_images/1967257-597080e04f2b3e3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h2><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可，下图有参数说明！</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-b2fb6cf009b3f669.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-97168faa092d6361.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"><br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"window"</span>:&#123;</span><br><span class="line">        <span class="attr">"navigationBarBackgroundColor"</span>: <span class="string">"#BBDEF8"</span>,</span><br><span class="line">        <span class="attr">"navigationBarTitleText"</span>: <span class="string">"Demo"</span>,</span><br><span class="line">        <span class="attr">"navigationBarTextStyle"</span>:<span class="string">"white"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-d5077071bec29f39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>现在看ActionBar是不是像那么回事了！好接下来我们继续写我们第一个界面</p>
+<h2 id="美化页面"><a href="#美化页面" class="headerlink" title="美化页面"></a>美化页面</h2><p>美化页面我们用到了 wxml 和 wxss文件<br>为了程序代码结构简洁<br>我们需要在跟目录下创建一个新文件夹 名字随意，我们这里叫pages<br>然后在pages文件夹里再创建新文件夹 名字随意 这里我们叫 index<br>然后我们创建index.wxml文件然后在里面写入以下代码<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">text</span> <span class="attr">class</span>=<span class="string">"window"</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">text</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后创建index.wxss文件然后在里面写入以下代码<br><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.<span class="built_in">window</span>&#123;</span><br><span class="line">  color=<span class="comment">#4995fa;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后我们创建 index.js文件<br>在文件中输入如下代码（输入Page IDE会有提示）<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Page(&#123;</span><br><span class="line">  data:&#123;</span><br><span class="line">    <span class="comment">// text:"这是一个页面"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  onLoad:<span class="function"><span class="keyword">function</span><span class="params">(options)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 页面初始化 options为页面跳转所带来的参数</span></span><br><span class="line">  &#125;,</span><br><span class="line">  onReady:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 页面渲染完成</span></span><br><span class="line">  &#125;,</span><br><span class="line">  onShow:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 页面显示</span></span><br><span class="line">  &#125;,</span><br><span class="line">  onHide:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 页面隐藏</span></span><br><span class="line">  &#125;,</span><br><span class="line">  onUnload:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 页面关闭</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>函数解释如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-4cfa70645ebb7af1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="配置首页"><a href="#配置首页" class="headerlink" title="配置首页"></a>配置首页</h2><p>Json文件负责配置页面路径<br>所以我们在里面加入如下代码<br>其中index的含义 其实就是指index.js文件<br>这里需要说明一点 pages 里面的路径其实是指向js文件的<br>如果一个目录下没有该名称的js文件是会报错的！<br><figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"pages"</span>:[</span><br><span class="line">  <span class="string">"pages/index/index"</span></span><br><span class="line">],</span><br></pre></td></tr></table></figure></p>
+<p>完成了！我们来运行程序！</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-6d43ae0c0f482b2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<hr>
+<h1 id="超级Hello-World"><a href="#超级Hello-World" class="headerlink" title="超级Hello World"></a>超级Hello World</h1><p>为了学习事件绑定，以及如何将数据在页面上更新<br>我们来做个超级Hello World，就是我点击文字，能让<br>它变色！</p>
+<h2 id="绑定事件"><a href="#绑定事件" class="headerlink" title="绑定事件"></a>绑定事件</h2><p>我们打开index.wxml 将里面代码改成这样<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">text</span> <span class="attr">catchtap</span>=<span class="string">"click"</span> <span class="attr">class</span>=<span class="string">"window"</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">text</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>其实也就是加了</p>
+<blockquote>
+<ul>
+<li>catchtap=”click”</li>
+</ul>
+</blockquote>
+<p>这两个属性是什么意思呢 别着急 我会一一解释</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-61458d7fbae5b96d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>上图展示了事件的一些的属性名称，这里需要注意红框标注起来的内容，区分出冒泡事件和非冒泡事件，其实冒泡事件就是需要往上面一层容器传递这个事件。</p>
+<p>看了这图 我们再来看 catchtap=”click” 的含义<br>catch 代表非冒泡事件<br>tap 代表点击事件<br>所以连在一起就是非冒泡点击事件<br>那后面那个click是啥<br>click 其实只是个变量名字<br>我们在index.js需要用这个名字绑定接收事件的函数<br>我们打开index.js<br>然后添加如下函数<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">click:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"点击了文字"</span>);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p>添加完后代码长这样 红框中就是 添加的这个代码</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-24e2d7cc79c3ce74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>所以其实点击事件的回调函数 就是 catchtap=”click”<br>中的 click 后面加上 :function() 构成的<br>现在我们来运行程序试试 然后点击文字</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-fa75af3580fed8e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"><br>看是不是调用了 click:function 函数 并且打出了log</p>
+<p>好接下来我们写点击一下变色的逻辑<br>那如何让一个文字变色呢，当然是css<br>所以我们需要再index.wxss 中添加一个样式<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.window-red</span>&#123;</span><br><span class="line">    <span class="attribute">color</span>:<span class="number">#D23933</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-aa0cbe195153b022.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>然后我们进入index.js文件<br>你会发现代码里面有个 data:{} 它不是page生命周期函数<br>其实他是个变量的数组，这个里面申请的变量都可以在 wxml中使用</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-2b33ef3cb7901246.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>我们在这里申请一个color</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-bbb06aa246598eaa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>color的值就是index.wxss中的样式名称<br>然后进入index.wxml中,将class中的值改成 </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-394640c62d5a08fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>其实意思就是 将js文件中变量 color的值在这里使用<br>也就是值等于 window<br>然后我们再回到index.js文件<br>在最上面申请一个变量控制点击<br>然后在click:function() 函数中添加如下代码<br><figure class="highlight openscad"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">click:<span class="function"><span class="keyword">function</span><span class="params">()</span>&#123;</span></span><br><span class="line">   console.<span class="built_in">log</span>(<span class="string">"点击了文字"</span>);</span><br><span class="line">     <span class="keyword">if</span>(flag)&#123;</span><br><span class="line">       <span class="built_in">color</span> = <span class="string">"window-red"</span>;</span><br><span class="line">       flag = <span class="literal">false</span>;</span><br><span class="line">     &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">       <span class="built_in">color</span> = <span class="string">"window"</span>;</span><br><span class="line">       flag = <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     this.setData(&#123;</span><br><span class="line">       <span class="built_in">color</span></span><br><span class="line">     &#125;);</span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure></p>
+<p>修改完后的代码如图</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-e0e007a06b654cc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>其实就是在点击是后 更换color变量的值 而更换的这个值其实就是样式的名称</p>
+<h2 id="更新界面数据"><a href="#更新界面数据" class="headerlink" title="更新界面数据"></a>更新界面数据</h2><p>这里有个问题 我们更换完值 但是在wxml中不会立即生效<br>所以我们需要调用<br>this.setData()方法将值同步给wxml 让它立即生效</p>
+<p>好了我们运行程序 点击Hello 看看是不是点一下 变一下颜色！</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1967257-f28a18cdb0f96d7e.gif?imageMogr2/auto-orient/strip" alt="111111.gif"></p>
+<hr>
+<p>最后再补充一点 index目录下也是可以配置 json文件的<br>也就是每个页面都可以配置自己独特的actionbar颜色等等<br>这里的配置会覆盖 app.json文件的配置</p>
+<p>最后附上github 地址 <a href="https://github.com/pwh0996/WXDemo.git" target="_blank" rel="noopener">https://github.com/pwh0996/WXDemo.git</a><br>最后由于着急睡觉 ，所以错别字比较多，后面整理望大家见谅</p>
+<p>喜欢的话欢迎打赏~！！！我会继续写下去的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/27/Hexo博客搭建日记/" rel="next" title="Hexo博客搭建日记-小白篇">
+                <i class="fa fa-chevron-left"></i> Hexo博客搭建日记-小白篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/08/Android学习之路--Activity的生命周期和启动模式/" rel="prev" title="Android学习之路 -- Activity的生命周期和启动模式">
+                Android学习之路 -- Activity的生命周期和启动模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IDE搭建"><span class="nav-number">1.1.</span> <span class="nav-text">IDE搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#知识准备"><span class="nav-number">1.2.</span> <span class="nav-text">知识准备</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从零开始"><span class="nav-number">2.</span> <span class="nav-text">从零开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#微信小程序中就四种类型的文件"><span class="nav-number">2.1.</span> <span class="nav-text">微信小程序中就四种类型的文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#app-json"><span class="nav-number">2.1.1.</span> <span class="nav-text">app.json</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-js"><span class="nav-number">2.1.2.</span> <span class="nav-text">app.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-wxss"><span class="nav-number">2.1.3.</span> <span class="nav-text">app.wxss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-wxml"><span class="nav-number">2.1.4.</span> <span class="nav-text">app.wxml</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hello-World"><span class="nav-number">3.</span> <span class="nav-text">Hello World</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建程序实例"><span class="nav-number">3.1.</span> <span class="nav-text">创建程序实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#美化ActionBar"><span class="nav-number">3.2.</span> <span class="nav-text">美化ActionBar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#美化页面"><span class="nav-number">3.3.</span> <span class="nav-text">美化页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置首页"><span class="nav-number">3.4.</span> <span class="nav-text">配置首页</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#超级Hello-World"><span class="nav-number">4.</span> <span class="nav-text">超级Hello World</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#绑定事件"><span class="nav-number">4.1.</span> <span class="nav-text">绑定事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新界面数据"><span class="nav-number">4.2.</span> <span class="nav-text">更新界面数据</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

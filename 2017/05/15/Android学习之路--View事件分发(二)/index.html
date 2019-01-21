@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android学习之路,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="View的事件分发机制点击事件的传递规则点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则： public boolean dispatchTouchEvent (MotionEvent ev){ boolean consume = false; if (onInterceptTouchEvnet(ev){     consume = onTou">
+<meta name="keywords" content="Android学习之路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习之路 -- View事件分发(二)">
+<meta property="og:url" content="http://www.puwenhui.com/2017/05/15/Android学习之路--View事件分发(二)/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="View的事件分发机制点击事件的传递规则点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则： public boolean dispatchTouchEvent (MotionEvent ev){ boolean consume = false; if (onInterceptTouchEvnet(ev){     consume = onTou">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-06264ace4007d4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-12ace9e2f05b5fb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android学习之路 -- View事件分发(二)">
+<meta name="twitter:description" content="View的事件分发机制点击事件的传递规则点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则： public boolean dispatchTouchEvent (MotionEvent ev){ boolean consume = false; if (onInterceptTouchEvnet(ev){     consume = onTou">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1967257-06264ace4007d4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2017/05/15/Android学习之路--View事件分发(二)/">
+
+
+
+
+
+  <title>Android学习之路 -- View事件分发(二) | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2017/05/15/Android学习之路--View事件分发(二)/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android学习之路 -- View事件分发(二)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T19:22:13+08:00">
+                2017-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="View的事件分发机制"><a href="#View的事件分发机制" class="headerlink" title="View的事件分发机制"></a>View的事件分发机制</h3><h4 id="点击事件的传递规则"><a href="#点击事件的传递规则" class="headerlink" title="点击事件的传递规则"></a>点击事件的传递规则</h4><p>点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则：</p>
+<pre><code>public boolean dispatchTouchEvent (MotionEvent ev){
+boolean consume = false;
+if (onInterceptTouchEvnet(ev){
+    consume = onTouchEvent(ev);
+} else {
+    consume = child.dispatchTouchEnvet(ev);
+} 
+return consume;
+}
+</code></pre><p>上面代码主要涉及到以下三个方法：</p>
+<ul>
+<li>public boolean dispatchTouchEvent(MotionEvent ev);<br>这个方法用来进行事件的分发。如果事件传递给当前view，则调用此方法。返回结果表示是否消耗此事件，受onTouchEvent和下级View的dispatchTouchEvent方法影响。</li>
+<li>public boolean onInterceptTouchEvent(MotionEvent ev);<br>这个方法用来判断是否拦截事件。在dispatchTouchEvent方法中调用。返回结果表示是否拦截。</li>
+<li>public boolean onTouchEvent(MotionEvent ev);<br>这个方法用来处理点击事件。在dispatchTouchEvent方法中调用，返回结果表示是否消耗事件。如果不消耗，则在同一个事件序列中，当前View无法再次接收到事件。</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/1967257-06264ace4007d4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>点击事件的传递规则：对于一个根ViewGroup，点击事件产生后，首先会传递给他，这时候就会调用他的dispatchTouchEvent方法，如果Viewgroup的onInterceptTouchEvent方法返回true表示他要拦截事件，接下来事件就会交给ViewGroup处理，调用ViewGroup的onTouchEvent方法；如果ViewGroup的onInteceptTouchEvent方法返回值为false，表示ViewGroup不拦截该事件，这时事件就传递给他的子View，接下来子View的dispatchTouchEvent方法，如此反复直到事件被最终处理。</p>
+<p>当一个View需要处理事件时，如果它设置了OnTouchListener，那么onTouch方法会被调用，如果onTouch返回false，则当前View的onTouchEvent方法会被调用，返回true则不会被调用，同时，在onTouchEvent方法中如果设置了OnClickListener，那么他的onClick方法会被调用。==由此可见处理事件时的优先级关系： onTouchListener &gt; onTouchEvent &gt;onClickListener==</p>
+<p>关于事件传递的机制，这里给出一些结论：</p>
+<ol>
+<li>一个事件系列以down事件开始，中间包含数量不定的move事件，最终以up事件结束。</li>
+<li>正常情况下，一个事件序列只能由一个View拦截并消耗。</li>
+<li>某个View拦截了事件后，该事件序列只能由它去处理，并且它的onInterceptTouchEvent<br>不会再被调用。</li>
+<li>某个View一旦开始处理事件，如果它不消耗ACTION_DOWN事件（ onTouchEvnet返回false） ，那么同一事件序列中的其他事件都不会交给他处理，并且事件将重新交由他的父元素去处理，即父元素的onTouchEvent被调用。</li>
+<li>如果View不消耗ACTION_DOWN以外的其他事件，那么这个事件将会消失，此时父元素的onTouchEvent并不会被调用，并且当前View可以持续收到后续的事件，最终消失的点击事件会传递给Activity去处理。</li>
+<li>ViewGroup默认不拦截任何事件。</li>
+<li>View没有onInterceptTouchEvent方法，一旦事件传递给它，它的onTouchEvent方法会被调用。</li>
+<li>View的onTouchEvent默认消耗事件，除非他是不可点击的（ clickable和longClickable同时为false） 。View的longClickable属性默认false，clickable默认属性分情况（如TextView为false，button为true）。</li>
+<li>View的enable属性不影响onTouchEvent的默认返回值。</li>
+<li>onClick会发生的前提是当前View是可点击的，并且收到了down和up事件。</li>
+<li>事件传递过程总是由外向内的，即事件总是先传递给父元素，然后由父元素分发给子View，通过requestDisallowInterceptTouchEvent方法可以在子元素中干预父元素的分发过程，但是ACTION_DOWN事件除外。</li>
+</ol>
+<h5 id="事件分发的源码解析"><a href="#事件分发的源码解析" class="headerlink" title="事件分发的源码解析"></a>事件分发的源码解析</h5><p>略</p>
+<h4 id="滑动冲突"><a href="#滑动冲突" class="headerlink" title="滑动冲突"></a>滑动冲突</h4><p>在界面中，只要内外两层同时可以滑动，这个时候就会产生滑动冲突。滑动冲突的解决有固定的方法。</p>
+<h5 id="常见的滑动冲突场景"><a href="#常见的滑动冲突场景" class="headerlink" title="常见的滑动冲突场景"></a>常见的滑动冲突场景</h5><p><img src="https://upload-images.jianshu.io/upload_images/1967257-12ace9e2f05b5fb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ol>
+<li>外部滑动和内部滑动方向不一致；<br>比如viewpager和listview嵌套，但这种情况下viewpager自身已经对滑动冲突进行了处理。</li>
+<li>外部滑动方向和内部滑动方向一致；</li>
+<li>上面两种情况的嵌套。<br>只要解决1和2即可。</li>
+</ol>
+<h5 id="滑动冲突的处理规则"><a href="#滑动冲突的处理规则" class="headerlink" title="滑动冲突的处理规则"></a>滑动冲突的处理规则</h5><p>对于场景一，处理的规则是：当用户左右（ 上下） 滑动时，需要让外部的View拦截点击事件，当用户上下（ 左右） 滑动的时候，需要让内部的View拦截点击事件。根据滑动的方向判断谁来拦截事件。</p>
+<p>对于场景二，由于滑动方向一致，这时候只能在业务上找到突破点，根据业务需求，规定什么时候让外部View拦截事件，什么时候由内部View拦截事件。</p>
+<p>场景三的情况相对比较复杂，同样根据需求在业务上找到突破点。</p>
+<h5 id="滑动冲突的解决方式"><a href="#滑动冲突的解决方式" class="headerlink" title="滑动冲突的解决方式"></a>滑动冲突的解决方式</h5><p><strong>外部拦截法</strong><br>所谓外部拦截法是指点击事件都先经过父容器的拦截处理，如果父容器需要此事件就拦截，否则就不拦截。下面是伪代码：</p>
+<pre><code>public boolean onInterceptTouchEvent (MotionEvent event){
+boolean intercepted = false;
+int x = (int) event.getX();
+int y = (int) event.getY();
+switch (event.getAction()) {
+case MotionEvent.ACTION_DOWN:
+    intercepted = false;
+    break;
+case MotionEvent.ACTION_MOVE:
+    if (父容器需要当前事件） {
+    intercepted = true;
+    } else {
+    intercepted = flase;
+    } 
+    break;
+    } 
+case MotionEvent.ACTION_UP:
+    intercepted = false;
+    break;
+default : 
+    break;
+} 
+mLastXIntercept = x;
+mLastYIntercept = y;
+return intercepted;
+</code></pre><p>针对不同冲突，只需修改父容器需要当前事件的条件即可。其他不需修改也不能修改。</p>
+<ul>
+<li>ACTION_DOWN:必须返回false。因为如果返回true，后续事件都会被拦截，无法传递给子View。</li>
+<li>ACTION_MOVE：根据需要决定是否拦截</li>
+<li>ACTION_UP：必须返回false。如果拦截，那么子View无法接受up事件，无法完成click操作。而如果是父容器需要该事件，那么在ACTION_MOVE时已经进行了拦截，根据上一节的结论3，ACTION_UP不会经过onInterceptTouchEvent方法，直接交给父容器处理。</li>
+</ul>
+<p><strong>内部拦截法</strong><br>内部拦截法是指父容器不拦截任何事件，所有的事件都传递给子元素，如果子元素需要此事件就直接消耗，否则就交由父容器进行处理。这种方法与Android事件分发机制不一致，需要配合requestDisallowInterceptTouchEvent方法才能正常工作。下面是伪代码：</p>
+<pre><code>public boolean dispatchTouchEvent ( MotionEvent event ) {
+int x = (int) event.getX();
+int y = (int) event.getY();
+switch (event.getAction) {
+case MotionEvent.ACTION_DOWN:
+    parent.requestDisallowInterceptTouchEvent(true);
+    break;
+case MotionEvent.ACTION_MOVE:
+    int deltaX = x - mLastX;
+    int deltaY = y - mLastY;
+    if (父容器需要此类点击事件) {
+        parent.requestDisallowInterceptTouchEvent(false);
+    } 
+    break;
+case MotionEvent.ACTION_UP:
+    break;
+default : 
+    break;
+} 
+mLastX = x;
+mLastY = y;
+return super.dispatchTouchEvent(event);
+}
+</code></pre><p>==除了子元素需要做处理外，父元素也要默认拦截除了ACTION_DOWN以外的其他事件，这样当子元素调用parent.requestDisallowInterceptTouchEvent(false)方法时，父元素才能继续拦截所需的事件。==因此，父元素要做以下修改：</p>
+<pre><code>public boolean onInterceptTouchEvent (MotionEvent event) {
+    int action = event.getAction();
+    if(action == MotionEvent.ACTION_DOWN) {
+        return false;
+    } else {
+        return true;
+    }
+}
+</code></pre><p>优化滑动体验：</p>
+<pre><code>mScroller.abortAnimation();
+</code></pre><p>外部拦截法实例：<a href="https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_3/src/com/ryg/chapter_3/ui/HorizontalScrollViewEx.java" target="_blank" rel="noopener">HorizontalScrollViewEx</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android学习之路/" rel="tag"># Android学习之路</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/08/Android学习之路--View事件分发(一)/" rel="next" title="Android学习之路 -- View事件分发(一)">
+                <i class="fa fa-chevron-left"></i> Android学习之路 -- View事件分发(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/24/Android学习之路--View的工作原理(一)/" rel="prev" title="Android学习之路 -- View的工作原理(一)">
+                Android学习之路 -- View的工作原理(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#View的事件分发机制"><span class="nav-text">View的事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#点击事件的传递规则"><span class="nav-text">点击事件的传递规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#事件分发的源码解析"><span class="nav-text">事件分发的源码解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动冲突"><span class="nav-text">滑动冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#常见的滑动冲突场景"><span class="nav-text">常见的滑动冲突场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#滑动冲突的处理规则"><span class="nav-text">滑动冲突的处理规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#滑动冲突的解决方式"><span class="nav-text">滑动冲突的解决方式</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

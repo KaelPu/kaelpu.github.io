@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android学习之路,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="View的工作原理主要内容  View的工作原理 自定义View的实现方式 自定义View的底层工作原理，比如View的测量流程、布局流程、绘制流程 View常见的回调方法，比如构造方法、onAttach.onVisibilityChanged/onDetach等  初识ViewRoot和DecorViewViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和D">
+<meta name="keywords" content="Android学习之路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习之路 -- View的工作原理(一)">
+<meta property="og:url" content="http://www.puwenhui.com/2017/05/24/Android学习之路--View的工作原理(一)/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="View的工作原理主要内容  View的工作原理 自定义View的实现方式 自定义View的底层工作原理，比如View的测量流程、布局流程、绘制流程 View常见的回调方法，比如构造方法、onAttach.onVisibilityChanged/onDetach等  初识ViewRoot和DecorViewViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和D">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-f245ffbefe056fb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-a52532aa98246bae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-c50ccd20a316e977.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android学习之路 -- View的工作原理(一)">
+<meta name="twitter:description" content="View的工作原理主要内容  View的工作原理 自定义View的实现方式 自定义View的底层工作原理，比如View的测量流程、布局流程、绘制流程 View常见的回调方法，比如构造方法、onAttach.onVisibilityChanged/onDetach等  初识ViewRoot和DecorViewViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和D">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1967257-f245ffbefe056fb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2017/05/24/Android学习之路--View的工作原理(一)/">
+
+
+
+
+
+  <title>Android学习之路 -- View的工作原理(一) | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2017/05/24/Android学习之路--View的工作原理(一)/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android学习之路 -- View的工作原理(一)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-24T20:24:42+08:00">
+                2017-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h3><p>主要内容</p>
+<ul>
+<li>View的工作原理</li>
+<li>自定义View的实现方式</li>
+<li>自定义View的底层工作原理，比如View的测量流程、布局流程、绘制流程</li>
+<li>View常见的回调方法，比如构造方法、onAttach.onVisibilityChanged/onDetach等</li>
+</ul>
+<h4 id="初识ViewRoot和DecorView"><a href="#初识ViewRoot和DecorView" class="headerlink" title="初识ViewRoot和DecorView"></a>初识ViewRoot和DecorView</h4><p>ViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和DecorView的纽带，View的三大流程（ mearsure、layout、draw） 均是通过ViewRoot来完成。当Activity对象被创建完毕后，会将DecorView添加到Window中，同时创建 ViewRootImpl 对象，并将ViewRootImpl 对象和DecorView建立连接，源码如下：</p>
+<pre><code>root = new ViewRootImpl(view.getContext(),display);
+root.setView(view,wparams, panelParentView);
+</code></pre><p>View的绘制流程是从ViewRoot的performTraversals开始的<br><img src="https://upload-images.jianshu.io/upload_images/1967257-f245ffbefe056fb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ol>
+<li>measure用来测量View的宽高</li>
+<li>layout来确定View在父容器中的位置</li>
+<li>draw负责将View绘制在屏幕上</li>
+</ol>
+<p>performTraversals会依次调用 performMeasure 、 performLayout 和performDraw 三个方法，这三个方法分别完成顶级View的measure、layout和draw这三大流程。其中 performMeasure 中会调用 measure 方法，在 measure 方法中又会调用 onMeasure 方法，在 onMeasure 方法中则会对所有子元素进行measure过程，这样就完成了一次measure过程；子元素会重复父容器的measure过程，如此反复完成了整个View数的遍历。另外两个过程同理。</p>
+<ul>
+<li>Measure完成后, 可以通过getMeasuredWidth 、getMeasureHeight 方法来获取View测量后的宽/高。特殊情况下，测量的宽高不等于最终的宽高，详见后面。</li>
+<li>Layout过程决定了View的四个顶点的坐标和实际View的宽高，完成后可通过 getTop 、 getBotton 、 getLeft 和 getRight 拿到View的四个定点坐标。</li>
+</ul>
+<p>DecorView作为顶级View，其实是一个 FrameLayout ，它包含一个竖直方向的 LinearLayout ，这个 LinearLayout 分为标题栏和内容栏两个部分。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-a52532aa98246bae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>在Activity通过setContextView所设置的布局文件其实就是被加载到内容栏之中的。这个内容栏的id是 R.android.id.content ，通过 <code>`</code> ViewGroup content = findViewById(R.android.id.content);<br>可以得到这个contentView。View层的事件都是先经过DecorView，然后才传递到子View。</p>
+<h4 id="理解MeasureSpec"><a href="#理解MeasureSpec" class="headerlink" title="理解MeasureSpec"></a>理解MeasureSpec</h4><p>MeasureSpec决定了一个View的尺寸规格。但是父容器会影响View的MeasureSpec的创建过程。系统将View的 LayoutParams 根据父容器所施加的规则转换成对应的MeasureSpec，然后根据这个MeasureSpec来测量出View的宽高。</p>
+<h5 id="MeasureSpec"><a href="#MeasureSpec" class="headerlink" title="MeasureSpec"></a>MeasureSpec</h5><p>MeasureSpec代表一个32位int值，高2位代表SpecMode（ 测量模式） ，低30位代表SpecSize（ 在某个测量模式下的规格大小） 。<br>SpecMode有三种：</p>
+<ul>
+<li>UNSPECIFIED ：父容器不对View进行任何限制，要多大给多大，一般用于系统内部</li>
+<li>EXACTLY：父容器检测到View所需要的精确大小，这时候View的最终大小就是SpecSize所指定的值，对应LayoutParams中的 match_parent 和具体数值这两种模式</li>
+<li>AT_MOST ：对应View的默认大小，不同View实现不同，View的大小不能大于父容器的SpecSize，对应 LayoutParams 中的 wrap_content</li>
+</ul>
+<h5 id="MeasureSpec和LayoutParams的对应关系"><a href="#MeasureSpec和LayoutParams的对应关系" class="headerlink" title="MeasureSpec和LayoutParams的对应关系"></a>MeasureSpec和LayoutParams的对应关系</h5><p>对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定。而View的MeasureSpec由父容器的MeasureSpec和自身的LayoutParams共同决定。</p>
+<p>View的measure过程由ViewGroup传递而来，参考ViewGroup的 measureChildWithMargins 方法，通过调用子元素的 getChildMeasureSpec 方法来得到子元素的MeasureSpec，再调用子元素的 measure 方法。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-c50ccd20a316e977.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>parentSize是指父容器中目前可使用的大小。</p>
+<ol>
+<li>当View采用固定宽/高时（ 即设置固定的dp/px） ,不管父容器的MeasureSpec是什么，View的MeasureSpec都是EXACTLY模式，并且大小遵循我们设置的值。</li>
+<li>当View的宽/高是 match_parent 时，View的MeasureSpec都是EXACTLY模式并且其大小等于父容器的剩余空间。</li>
+<li>当View的宽/高是 wrap_content 时，View的MeasureSpec都是AT_MOST模式并且其大小不能超过父容器的剩余空间。</li>
+<li>父容器的UNSPECIFIED模式，一般用于系统内部多次Measure时，表示一种测量的状态，一般来说我们不需要关注此模式。</li>
+</ol>
+<h4 id="View的工作流程"><a href="#View的工作流程" class="headerlink" title="View的工作流程"></a>View的工作流程</h4><h5 id="measure过程"><a href="#measure过程" class="headerlink" title="measure过程"></a>measure过程</h5><p><strong>View的measure过程</strong></p>
+<p>直接继承View的自定义控件需要重写 onMeasure 方法并设置 wrap_content （ 即specMode是 AT_MOST 模式） 时的自身大小，否则在布局中使用 wrap_content 相当于使用 match_parent 。对于非 wrap_content 的情形，我们沿用系统的测量值即可。</p>
+<pre><code>  @Override
+protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+    int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+    int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+    int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+      // 在 MeasureSpec.AT_MOST 模式下，给定一个默认值mWidth,mHeight。默认宽高灵活指定
+      //参考TextView、ImageView的处理方式
+      //其他情况下沿用系统测量规则即可
+    if (widthSpecMode == MeasureSpec.AT_MOST
+            &amp;&amp; heightSpecMode == MeasureSpec.AT_MOST) {
+        setMeasuredDimension(mWith, mHeight);
+    } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+        setMeasuredDimension(mWith, heightSpecSize);
+    } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+        setMeasuredDimension(widthSpecSize, mHeight);
+    }
+}
+</code></pre><p><strong>ViewGroup的measure过程</strong></p>
+<p>ViewGroup是一个抽象类，没有重写View的 onMeasure 方法，但是它提供了一个 measureChildren 方法。这是因为不同的ViewGroup子类有不同的布局特性，导致他们的测量细节各不相同，比如 LinearLayout 和 RelativeLayout ,因此ViewGroup没办法同一实现 onMeasure方法。</p>
+<p>measureChildren方法的流程：</p>
+<ol>
+<li>取出子View的 LayoutParams</li>
+<li>通过 getChildMeasureSpec 方法来创建子元素的 MeasureSpec</li>
+<li>将 MeasureSpec 直接传递给View的measure方法来进行测量</li>
+</ol>
+<p>通过LinearLayout的onMeasure方法里来分析ViewGroup的measure过程：</p>
+<ol>
+<li>LinearLayout在布局中如果使用match_parent或者具体数值，测量过程就和View一致，即高度为specSize</li>
+<li>LinearLayout在布局中如果使用wrap_content，那么它的高度就是所有子元素所占用的高度总和，但不超过它的父容器的剩余空间</li>
+<li>LinearLayout的的最终高度同时也把竖直方向的padding考虑在内</li>
+</ol>
+<p>View的measure过程是三大流程中最复杂的一个，measure完成以后，通过 getMeasuredWidth/Height 方法就可以正确获取到View的测量后宽/高。在某些情况下，系统可能需要多次measure才能确定最终的测量宽/高，所以在onMeasure中拿到的宽/高很可能不是准确的。</p>
+<p>==如果我们想要在Activity启动的时候就获取一个View的宽高，怎么操作呢？==因为View的measure过程和Activity的生命周期并不是同步执行，无法保证在Activity的 onCreate、onStart、onResume 时某个View就已经测量完毕。所以有以下四种方式来获取View的宽高：</p>
+<ol>
+<li>Activity/View#onWindowFocusChanged<br>onWindowFocusChanged这个方法的含义是：VieW已经初始化完毕了，宽高已经准备好了，需要注意：它会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用。</li>
+<li>view.post(runnable)<br>通过post将一个runnable投递到消息队列的尾部，当Looper调用此runnable的时候，View也初始化好了。</li>
+<li>ViewTreeObserver<br>使用 ViewTreeObserver 的众多回调可以完成这个功能，比如OnGlobalLayoutListener 这个接口，当View树的状态发送改变或View树内部的View的可见性发生改变时，onGlobalLayout 方法会被回调，这是获取View宽高的好时机。需要注意的是，伴随着View树状态的改变， onGlobalLayout 会被回调多次。</li>
+<li>view.measure(int widthMeasureSpec,int heightMeasureSpec)<br>手动对view进行measure。需要根据View的layoutParams分情况处理：<ul>
+<li>match_parent：<br>无法measure出具体的宽高，因为不知道父容器的剩余空间，无法测量出View的大小</li>
+<li>具体的数值（ dp/px）:<pre><code>int widthMeasureSpec = MeasureSpec.makeMeasureSpec(100,MeasureSpec.EXACTLY);
+int heightMeasureSpec = MeasureSpec.makeMeasureSpec(100,MeasureSpec.EXACTLY);
+view.measure(widthMeasureSpec,heightMeasureSpec);
+</code></pre></li>
+<li>wrap_content：<pre><code>int widthMeasureSpec = MeasureSpec.makeMeasureSpec((1&lt;&lt;30)-1,MeasureSpec.AT_MOST);
+// View的尺寸使用30位二进制表示，最大值30个1，在AT_MOST模式下，我们用View理论上能支持的最大值去构造MeasureSpec是合理的
+int heightMeasureSpec = MeasureSpec.makeMeasureSpec((1&lt;&lt;30)-1,MeasureSpec.AT_MOST);
+view.measure(widthMeasureSpec,heightMeasureSpec);
+</code></pre></li>
+</ul>
+</li>
+</ol>
+<h5 id="layout过程"><a href="#layout过程" class="headerlink" title="layout过程"></a>layout过程</h5><p>layout的作用是ViewGroup用来确定子View的位置，当ViewGroup的位置被确定后，它会在onLayout中遍历所有的子View并调用其layout方法，在 layout 方法中， onLayout 方法又会被调用。</p>
+<p>View的 layout 方法确定本身的位置，源码流程如下： </p>
+<ol>
+<li>setFrame 确定View的四个顶点位置，即确定了View在父容器中的位置</li>
+<li>调用 onLayout 方法，确定所有子View的位置，和onMeasure一样，onLayout的具体实现和布局有关，因此View和ViewGroup均没有真正实现 onLayout 方法。</li>
+</ol>
+<p>以LinearLayout的 onLayout 方法为例：</p>
+<ol>
+<li>遍历所有子View并调用 setChildFrame 方法来为子元素指定对应的位置</li>
+<li>setChildFrame 方法实际上调用了子View的 layout 方法，形成了递归</li>
+</ol>
+<p>==View的测量宽高和最终宽高的区别：==<br>在View的默认实现中，View的测量宽高和最终宽高相等，只不过测量宽高形成于measure过程，最终宽高形成于layout过程。但重写view的layout方法可以使他们不相等。</p>
+<h5 id="draw过程"><a href="#draw过程" class="headerlink" title="draw过程"></a>draw过程</h5><p>View的绘制过程遵循如下几步：</p>
+<ol>
+<li>绘制背景 drawBackground(canvas)</li>
+<li>绘制自己 onDraw</li>
+<li>绘制children dispatchDraw 遍历所有子View的 draw 方法</li>
+<li>绘制装饰 onDrawScrollBars</li>
+</ol>
+<p>ViewGroup会默认启用 setWillNotDraw 为ture，导致系统不会去执行 onDraw ，所以自定义ViewGroup需要通过onDraw来绘制内容时，必须显式的关闭 WILL_NOT_DRAW 这个优化标记位，即调用 setWillNotDraw(false);</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android学习之路/" rel="tag"># Android学习之路</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/15/Android学习之路--View事件分发(二)/" rel="next" title="Android学习之路 -- View事件分发(二)">
+                <i class="fa fa-chevron-left"></i> Android学习之路 -- View事件分发(二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/08/Android学习之路--View的工作原理(二)/" rel="prev" title="Android学习之路 -- View的工作原理(二)">
+                Android学习之路 -- View的工作原理(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#View的工作原理"><span class="nav-text">View的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初识ViewRoot和DecorView"><span class="nav-text">初识ViewRoot和DecorView</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#理解MeasureSpec"><span class="nav-text">理解MeasureSpec</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MeasureSpec"><span class="nav-text">MeasureSpec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MeasureSpec和LayoutParams的对应关系"><span class="nav-text">MeasureSpec和LayoutParams的对应关系</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#View的工作流程"><span class="nav-text">View的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#measure过程"><span class="nav-text">measure过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#layout过程"><span class="nav-text">layout过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#draw过程"><span class="nav-text">draw过程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

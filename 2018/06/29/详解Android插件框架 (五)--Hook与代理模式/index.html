@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言Hook在中文意思就是”钩子”,怎么理解什么是钩子呢？这幅图应该比较形象，当我们执行一段函或者代码片段的过程中，我们可以在合适的位置设置一个钩子，让代码先从我们这里走，然后再回到它原来的轨道上。听上去有点拦截的意思，所以Hook天生就有点黑科技的味道。那么在Android中我们该如何实现Hook呢？ 代理模式Hook的关键就是运用了设计模式中的代理模式，下图是代理模式的类图，主要思想和上面的比">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解Android插件框架 (五)--Hook与代理模式">
+<meta property="og:url" content="http://www.puwenhui.com/2018/06/29/详解Android插件框架 (五)--Hook与代理模式/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="前言Hook在中文意思就是”钩子”,怎么理解什么是钩子呢？这幅图应该比较形象，当我们执行一段函或者代码片段的过程中，我们可以在合适的位置设置一个钩子，让代码先从我们这里走，然后再回到它原来的轨道上。听上去有点拦截的意思，所以Hook天生就有点黑科技的味道。那么在Android中我们该如何实现Hook呢？ 代理模式Hook的关键就是运用了设计模式中的代理模式，下图是代理模式的类图，主要思想和上面的比">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-8fc081d5418fdf77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-66d52060504012e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-ae1e51d78309acac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="详解Android插件框架 (五)--Hook与代理模式">
+<meta name="twitter:description" content="前言Hook在中文意思就是”钩子”,怎么理解什么是钩子呢？这幅图应该比较形象，当我们执行一段函或者代码片段的过程中，我们可以在合适的位置设置一个钩子，让代码先从我们这里走，然后再回到它原来的轨道上。听上去有点拦截的意思，所以Hook天生就有点黑科技的味道。那么在Android中我们该如何实现Hook呢？ 代理模式Hook的关键就是运用了设计模式中的代理模式，下图是代理模式的类图，主要思想和上面的比">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1967257-8fc081d5418fdf77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2018/06/29/详解Android插件框架 (五)--Hook与代理模式/">
+
+
+
+
+
+  <title>详解Android插件框架 (五)--Hook与代理模式 | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2018/06/29/详解Android插件框架 (五)--Hook与代理模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">详解Android插件框架 (五)--Hook与代理模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-29T18:25:40+08:00">
+                2018-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Hook在中文意思就是”钩子”,怎么理解什么是钩子呢？<br>这幅图应该比较形象，当我们执行一段函或者代码片段的过程中，我们可以在合适的位置设置一个钩子，让代码先从我们这里走，然后再回到它原来的轨道上。听上去有点拦截的意思，所以Hook天生就有点黑科技的味道。那么在Android中我们该如何实现Hook呢？<br><img src="https://upload-images.jianshu.io/upload_images/1967257-8fc081d5418fdf77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>Hook的关键就是运用了设计模式中的代理模式，下图是代理模式的类图，主要思想和上面的比喻一样，代理类和委托类都实现同一个接口，然后通过操作代理类，来间接操作委托类，为啥要这么麻烦呢，这就是我们刚说的，代理类其实在这里起到了拦截的作用，因为他和委托类实现同同一接口，在外部看来我操作代理类，还是操作委托类都是一样的。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-66d52060504012e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>在Android中常见的代理分两种，<strong>静态代理和动态代理</strong><br>这两种方法代理方式有不同的特点，适用于不同场景，但是思想都是类似的。下面我们分别来介绍。</p>
+<h3 id="无代理"><a href="#无代理" class="headerlink" title="无代理"></a>无代理</h3><p>首先我们先举个例子，在没有代理模式下的情况，由于比较简单，就直接上代码了，大家一看就明白</p>
+<p>① 创建一个Human接口<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public<span class="built_in"> interface </span>Human &#123;</span><br><span class="line">    void eat();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接口中只有一个eat方法，代表人吃东西</p>
+<p>② 继承Human实现一个Human类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HumanImpl</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eat</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Log.d(<span class="string">"HumanImpl"</span>, <span class="string">"Eat"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现eat方法 里面只打印一个Eat</p>
+<p>③ 实例化对象，调用eat方法<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">noProxy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Human human = <span class="keyword">new</span> HumanImpl();</span><br><span class="line">        human.eat();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>一切正常，但是我们现在想拦截eat这个方法，然后再里面加一行打印信息该怎么做呢，有人说直接改一下HumanImpl 类中的eat方法不就行了，那么如果HumanImpl 文件是个库文件class，你不能修改呢？<br>这时候我们就可以考使用代理模式解决。</p>
+<h3 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h3><p>还是上面的例子，我们在不修改HumanImpl 这个类的情况下，使用静态代理的方法，在eat函数加个打印信息。</p>
+<p>① 实现Human 接口的一个代理类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HumanProxy</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eat</span><span class="params">(String something)</span> </span>&#123;</span><br><span class="line">        HumanImpl human = <span class="keyword">new</span> HumanImpl();</span><br><span class="line">       <span class="comment">// 在调用eat之前，先打印一行log</span></span><br><span class="line">		Log.d(<span class="string">"HumanImpl"</span>, <span class="string">"Eat before"</span>);</span><br><span class="line">        human.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>②  实例化对象，调用eat方法<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">proxy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Human human = <span class="keyword">new</span> HumanProxy();</span><br><span class="line">        human.eat();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样我们在无法修改HumanImpl类的情况下，在eat方法执行前后打印了新的日志。<br>这只是个简单的例子。下面我们看看那什么是动态代理。</p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>动态代理和静态代理有什么区别呢？简单来说我们使用静态代理，需要现在代码中写好代理类，而写一个接口就需要写一个代理类，比如Human接口的代理类是HumanProxy，那么如果我们有多个接口需要使用代理模式呢？我们就需要写很多个代理类。有没有一种方法能作为所有接口的代理类呢？有！这就是动态代理。</p>
+<p>动态代理是由JDK提供的方法，我们先来看看具体使用，然后再来分析下原理，还是上面的例子，我们使用动态代理的方式在eat函数之前打印一行日志</p>
+<p>① 创建CommonProxy 类实现InvocationHandler接口<br><figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommonProxy</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span> Object object;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> DynamicEatProxy(Object T) &#123;</span><br><span class="line">        object = T;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> Object invoke(Object proxy, <span class="function"><span class="keyword">Method</span> <span class="title">method</span>, <span class="title">Object</span>[] <span class="title">args</span>)&#123;</span></span><br><span class="line">		<span class="built_in">Log</span>.d(<span class="string">"HumanImpl"</span>, <span class="string">"Eat before"</span>);</span><br><span class="line">        Object returnValue = <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>object, args);</span><br><span class="line">        <span class="keyword">return</span> returnValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>InvocationHandler这个接口是啥 为啥要实现这个接口？其实这个接口就是JDK给我提供的动态代理方案的接口，实现了这个接口，我们就可以创建出一个什么都能代理的代类。</p>
+<p>② 实例化对象 调用eat方法<br><figure class="highlight pony"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void proxy() &#123;</span><br><span class="line">       <span class="type">HumanImpl</span> human = <span class="function"><span class="keyword">new</span> <span class="title">HumanImpl</span>();</span></span><br><span class="line"><span class="function">       <span class="title">CommonProxy</span> <span class="title">action</span> = <span class="title">new</span> <span class="title">CommonProxy</span>(human);</span></span><br><span class="line"><span class="function">       <span class="title">ClassLoader</span> <span class="title">loader</span> = <span class="title">human</span>.<span class="title">getClass</span>().<span class="title">getClassLoader</span>();</span></span><br><span class="line"><span class="function">       <span class="title">Class</span>[] <span class="title">interfaces</span> = <span class="title">human</span>.<span class="title">getClass</span>().<span class="title">getInterfaces</span>();</span></span><br><span class="line"><span class="function">       <span class="title">Object</span> <span class="title">proxy</span> = <span class="title">Proxy</span>.<span class="title">newProxyInstance</span>(loader, interfaces, action);</span></span><br><span class="line"><span class="function">       <span class="title">Human</span> <span class="title">humanProxy</span> = (<span class="type">Human</span>)<span class="title">proxy</span>; <span class="comment">//将proxy代理转为Human接口类进行Human接口内方法的调用</span></span></span><br><span class="line"><span class="function">       <span class="title">humanProxy</span>.<span class="title">eat</span>();</span></span><br><span class="line"><span class="function">   &#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>这段看上去有些复杂，其实很简单，来我们慢慢理解，其实关键的就三步</p>
+<p>第一步，包装被代理对象，然后把被代理的传进去，注意这个参数是Object 类型哦，所以可以代理任何对象<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">HumanImpl human</span> = new HumanImpl();</span><br><span class="line"><span class="attribute">CommonProxy action</span> = new CommonProxy(human);</span><br></pre></td></tr></table></figure></p>
+<p>第二步 创建公共代理对象<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader loader = human.getClass().getClassLoader();</span><br><span class="line">Class[] interfaces = human.getClass().getInterfaces();</span><br><span class="line">   Object<span class="built_in"> proxy </span>= Proxy.newProxyInstance(loader, interfaces, action);</span><br></pre></td></tr></table></figure></p>
+<p>通过Proxy.newProxyInstance()这个方法，给他传入被代理对象的 ClassLoader  interfaces  还有包装过的被代理对象action  ，这个方法就会返回一个公共代理对象 proxy 其实这玩意就等同于我们静态代理里面那个HumanProxy 对象了。</p>
+<p>第三步 实例化对象，调用eat方法<br><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Human humanProxy = (Human)proxy<span class="comment">; //将proxy代理转为Human接口类进行Human接口内方法的调用</span></span><br><span class="line">humanProxy.eat()<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>转回Human 类型，然后调用eat接口</p>
+<p>转了一大圈，是不是有点懵逼？好看个图休息下，</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1967257-ae1e51d78309acac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>最后总结就是，通过动态代理的方案 我们可以给任意一个对象创建一个公共的代理类，当我们调用，通过这个公共代理类调用的任何方法，就会先走到上面的invoke，也就意味着被拦截了，我们插入一行打印log够，他会继续通过反射的方法去执行委托类中的原本函数。这就实现了拦截代理。</p>
+<h2 id="Hook原理"><a href="#Hook原理" class="headerlink" title="Hook原理"></a>Hook原理</h2><p>Hook简单来说就是 代理模式和反射机制的结合，我们在开发中遇到某些API不能满足我们的要求，但是我们又无法修改源码，就可以使用Hook方式处理，Hook的基本方法就是通过找到要修改的API函数入口点，改变它地址指向我们自定义的函数。</p>
+<p>一般Hook点我们都会选 静态变量 和 单例对象，因为这些对象一旦创建，他们不容易变化。Hook 过程就是寻找Hook点，尽量Hook public的对象和方法，选择适合的代理模式，结果是接口 动态代理 和 静态代理都可以，如果是对象，我们一般使用静态代理对象替换原来的对象，而替换对象的方式 就是通过反射替换。</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>本章我们主要理解了 代理模式 包括动态代理 ，静态代理，以及Hook的思想和一些Hook原则，到这里我们基本明白了 Android实现插件化的底层工具和原理，下一篇我们来通过Hook技术简单练个手，加强理解，也作为正式进入讲解插件框架的入门篇。<br>[《详解Android插件框架 (六) – 小试牛刀Hook Activity》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/28/详解Android插件框架 (四)--反射机制/" rel="next" title="详解Android插件框架 (四)--反射机制">
+                <i class="fa fa-chevron-left"></i> 详解Android插件框架 (四)--反射机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代理模式"><span class="nav-number">2.</span> <span class="nav-text">代理模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无代理"><span class="nav-number">2.1.</span> <span class="nav-text">无代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态代理"><span class="nav-number">2.2.</span> <span class="nav-text">静态代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态代理"><span class="nav-number">2.3.</span> <span class="nav-text">动态代理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hook原理"><span class="nav-number">3.</span> <span class="nav-text">Hook原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束语"><span class="nav-number">4.</span> <span class="nav-text">结束语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

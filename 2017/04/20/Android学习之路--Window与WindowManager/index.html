@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android学习之路,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="理解Window和WindowManangerWindow是一个抽象类，具体实现是 PhoneWindow 。不管是 Activity 、 Dialog 、 Toast 它们的视图都是附加在Window上的，因此Window实际上是View的直接管理者。WindowManager 是外界访问Window的入口，通过WindowManager可以创建Window，而Window的具体实现位于 Win">
+<meta name="keywords" content="Android学习之路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习之路 -- Window与WindowManager">
+<meta property="og:url" content="http://www.puwenhui.com/2017/04/20/Android学习之路--Window与WindowManager/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="理解Window和WindowManangerWindow是一个抽象类，具体实现是 PhoneWindow 。不管是 Activity 、 Dialog 、 Toast 它们的视图都是附加在Window上的，因此Window实际上是View的直接管理者。WindowManager 是外界访问Window的入口，通过WindowManager可以创建Window，而Window的具体实现位于 Win">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.435Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android学习之路 -- Window与WindowManager">
+<meta name="twitter:description" content="理解Window和WindowManangerWindow是一个抽象类，具体实现是 PhoneWindow 。不管是 Activity 、 Dialog 、 Toast 它们的视图都是附加在Window上的，因此Window实际上是View的直接管理者。WindowManager 是外界访问Window的入口，通过WindowManager可以创建Window，而Window的具体实现位于 Win">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2017/04/20/Android学习之路--Window与WindowManager/">
+
+
+
+
+
+  <title>Android学习之路 -- Window与WindowManager | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2017/04/20/Android学习之路--Window与WindowManager/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android学习之路 -- Window与WindowManager</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-20T02:12:12+08:00">
+                2017-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="理解Window和WindowMananger"><a href="#理解Window和WindowMananger" class="headerlink" title="理解Window和WindowMananger"></a>理解Window和WindowMananger</h3><p>Window是一个抽象类，具体实现是 PhoneWindow 。不管是 Activity 、 Dialog 、 Toast 它们的视图都是附加在Window上的，因此Window实际上是View的直接管理者。WindowManager 是外界访问Window的入口，通过WindowManager可以创建Window，而Window的具体实现位于 WindowManagerService 中，WindowManager和WindowManagerService的交互是一个IPC过程。</p>
+<h4 id="Window和WindowManager"><a href="#Window和WindowManager" class="headerlink" title="Window和WindowManager"></a>Window和WindowManager</h4><p>下面代码演示了通过WindowManager添加Window的过程：</p>
+<pre><code>mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+mFloatingButton = new Button(this);
+mFloatingButton.setText(&quot;click me&quot;);
+mLayoutParams = new WindowManager.LayoutParams(
+LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0, 0,
+PixelFormat.TRANSPARENT);
+mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL
+| LayoutParams.FLAG_NOT_FOCUSABLE
+| LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+mLayoutParams.type = LayoutParams.TYPE_SYSTEM_ERROR;
+mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+mLayoutParams.x = 100;
+mLayoutParams.y = 300;
+mFloatingButton.setOnTouchListener(this);
+mWindowManager.addView(mFloatingButton, mLayoutParams);
+</code></pre><p>上述代码将一个button添加到屏幕坐标为（100,300）的位置上。WindowManager的flags和type这两个属性比较重要。<br>Flags代表Window的属性，控制Window的显示特性</p>
+<ol>
+<li>FLAG_NOT_FOCUSABLE<br>在此模式下，Window不需要获取焦点，也不需要接收各种输入事件，这个标记同时会启用FLAG_NOT_TOUCH_MODAL，最终事件会直接传递给下层具有焦点的Window。</li>
+<li>FLAG_NOT_TOUCH_MODAL<br>在此模式下，系统将当前Window区域以外的点击事件传递给底层的Window，当前Window区域内的单击事件则自己处理。一般需要开启此标记。</li>
+<li>FLAG_SHOW_WHEN_LOCKED<br>开启此模式Window将显示在锁屏界面上。</li>
+</ol>
+<p>type参数表示Window的类型</p>
+<ol>
+<li>应用Window：Activity</li>
+<li>子Window： 如Dialog</li>
+<li>系统Window ：如Toast和系统状态栏<br>Window是分层的，每个Window对应一个z-ordered，层级大的会覆盖在层级小的上面，和HTM的z-index概念一样。在三类Window中，应用Window的层级范围是1~99，子Window的层级范围是1000~1999，系统Window的层级范围是2000~2999，这些值对应WindowManager.LayoutParams的type参数。一般系统Window选用 TYPE_SYSTEM_OVERLAY 或者 TYPE_SYSTEM_ERROR （ 同时需要权限 <code>&lt;uses-permission
+android:name=&quot;android.permission.SYSTEM_ALERT_WINDOW&quot; /&gt;</code> ） 。</li>
+</ol>
+<p>WindowManager提供的功能很简单，常用的只有三个方法：</p>
+<ol>
+<li>添加View</li>
+<li>更新View</li>
+<li>删除View</li>
+</ol>
+<p>这个三个方法定义在 ViewManager 中，而WindowManager继承了ViewManager。</p>
+<pre><code>public interface ViewManager
+{
+    public void addView(View view, ViewGroup.LayoutParams params);
+    public void updateViewLayout(View view, ViewGroup.LayoutParams params);
+    public void removeView(View view);
+}
+</code></pre><p>如何拖动window？<br>给view设置onTouchListener：<code>mFloatingButton.setOnTouchListener(this)。</code>在onTouch方法中更新view的位置，这个位置根据手指的位置设定。</p>
+<h4 id="Window的内部机制"><a href="#Window的内部机制" class="headerlink" title="Window的内部机制"></a>Window的内部机制</h4><p>Window是一个抽象的概念，每一个Window都对应着一个View和一个ViewRootImpl，Window和View通过ViewRootImpl来建立联系。因此Window并不是实际存在的，它是以View的形式存在的。所以WindowManager的三个方法都是针对View的，说明View才是Window存在的实体。在实际使用中无法直接访问Window，必须通过WindowManager来访问Window。</p>
+<h5 id="Window的添加过程"><a href="#Window的添加过程" class="headerlink" title="Window的添加过程"></a>Window的添加过程</h5><p>Window的添加过程需要通过WindowManager的addView()来实现, 而WindowManager是一个接口, 它的真正实现是WindowManagerImpl类。</p>
+<p>WindowManagerImpl并没有直接实现Window的三大操作, 而是全部交给了WindowManagerGlobal来处理. WindowManagerGlobal以工厂的形式向外提供自己的实例. 而WindowManagerImpl这种工作模式就典型的桥接模式, 将所有的操作全部委托给WindowManagerGlobal来实现.</p>
+<ol>
+<li>检查所有参数是否合法, 如果是子Window那么还需要调整一些布局参数.</li>
+<li>创建ViewRootImpl并将View添加到列表中.</li>
+<li>通过ViewRootImpl来更新界面并完成Window的添加过程.<br>这个过程是通过ViewRootImpl的setView()来完成的. View的绘制过程是由ViewRootImpl来完成的, 在内部会调用requestLayout()来完成异步刷新请求. 而scheduleTraversals()实际上是View绘制的入口. 接着会通过WindowSession完成Window的添加过程(Window的添加过程是一次IPC调用). 最终会通过WindowManagerService来实现Window的添加.</li>
+</ol>
+<p>WindowManagerService内部会为每一个应用保留一个单独的Session.</p>
+<h5 id="Window的删除过程"><a href="#Window的删除过程" class="headerlink" title="Window的删除过程"></a>Window的删除过程</h5><p>Window 的删除过程和添加过程一样, 都是先通过WindowManagerImpl后, 在进一步通过WindowManagerGlobal的removeView()来实现的.</p>
+<p>方法内首先通过findViewLocked来查找待删除的View的索引, 这个过程就是建立数组遍历, 然后调用removeViewLocked来做进一步的删除.</p>
+<p>这里通过ViewRootImpl的die()完成来完成删除操作. die()方法只是发送了请求删除的消息后就立刻返回了, 这个时候View并没有完成删除操作, 所以最后会将其添加到mDyingViews中, mDyingViews表示待删除的View的列表.</p>
+<p>die方法中只是做了简单的判断, 如果是异步删除那么就发送一个MSG_DIE的消息, ViewRootImpl中的Handler会处理此消息并调用doDie(); 如果是同步删除, 那么就不发送消息直接调用doDie()方法.</p>
+<p>在doDie()方法中会调用dispatchDetachedFromWindow()方法, 真正删除View的逻辑在这个方法内部实现. 其中主要做了四件事:</p>
+<ol>
+<li>垃圾回收的相关工作, 比如清除数据和消息,移除回调.</li>
+<li>通过Session的remove方法删除Window: mWindowSession.remove(mWindow), 这同样是一个IPC过程, 最终会调用WMS的removeWindow()方法.</li>
+<li>调用View的dispatchDetachedFromWindow()方法, 内部会调用View的onDetachedFromWindow()以及onDetachedFromWindowInternal(). 而对于onDetachedFromWindow()就是在View从Window中移除时, 这个方法就会被调用, 可以在这个方法内部做一些资源回收的工作. 比如停止动画,停止线程</li>
+<li>调用WindowManagerGlobal#doRemoveView方法刷新数据, 包括mRoots, mParams, mDyingViews, 需要将当前Window所关联的这三类对象从列表中删除.</li>
+</ol>
+<h5 id="Window的更新过程"><a href="#Window的更新过程" class="headerlink" title="Window的更新过程"></a>Window的更新过程</h5><p>WindowManagerGlobal#updateViewLayout()方法做的比较简单, 它需要更新View的LayoutParams并替换掉老的LayoutParams, 接着在更新ViewRootImpl中的LayoutParams. 这一步主要是通过setLayoutParams()方法实现.</p>
+<p>在ViewRootImpl中会通过scheduleTraversals()来对View重新布局, 包括测量,布局,重绘. 除了View本身的重绘以外, ViewRootImpl还会通过WindowSession来更新Window的视图, 这个过程最后由WMS的relayoutWindow()实现同样是一个IPC过程.</p>
+<h4 id="Window的创建过程"><a href="#Window的创建过程" class="headerlink" title="Window的创建过程"></a>Window的创建过程</h4><p>由之前的分析可以知道，View是Android中视图的呈现方式，但是View不能单独存在，必须附着在Window这个抽象的概念上面，因此有视图的地方就有Window。这些视图包括：Activity、Dialog、Toast、PopUpWindow、菜单等等。</p>
+<h5 id="Activity的Window创建过程"><a href="#Activity的Window创建过程" class="headerlink" title="Activity的Window创建过程"></a>Activity的Window创建过程</h5><p>Activity的大体启动流程: 最终会由ActivityThread中的PerformLaunchActivity()来完成整个启动过程, 这个方法内部会通过类加载器创建Activity的实例对象, 并调用其attach()方法为其关联运行过程中所依赖的一系列上下文环境变量。</p>
+<p>在attach()方法里, 系统会创建Activity所属的Window对象并为其设置回调接口, Window对象的创建是通过PolicyManager#makeNewWindow()方法实现. 由于Activity实现了Window的CallBack接口, 因此当Window接收到外界的状态改变的时候就会回调Activity方法. 比如说我们熟悉的onAttachedToWindow(), onDetachedFromWindow(), dispatchTouchEvent()等等。</p>
+<p>Activity将具体实现交给了Window处理, 而Window的具体实现就是PhoneWindow, 所以只需要看PhoneWindow的相关逻辑。分为以下几步</p>
+<ol>
+<li>如果没有DecorView, 那么就创建它. 由installDecor()–&gt;generateDecor()触发</li>
+<li>将View添加到DecorView的mContentParent中</li>
+<li>回调Activity的onContentChanged()通知activity视图已经发生改变</li>
+</ol>
+<p>这个时候DecorView已经被创建并初始化完毕, Activity的布局文件也已经添加成功到DecorView的mContentParent中. 但是这个时候DecorView还没有被WindowManager正式添加到Window中. 虽然早在Activity的attach方法中window就已经被创建了, 但是这个时候由于DecorView并没有被WindowManager识别, 所以这个时候的Window无法提供具体功能, 因为他还无法接收外界的输入信息.</p>
+<p>在ActivityThread#handleResumeActivity()方法中, 首先会调用Activity#onResume(), 接着会调用Activity#makeVisible(), 正是在makeVisible方法中, DecorView真正的完成了添加和显示这两个过程。</p>
+<h5 id="Dialog的Window创建过程"><a href="#Dialog的Window创建过程" class="headerlink" title="Dialog的Window创建过程"></a>Dialog的Window创建过程</h5><p>Dialog的Window的创建过程和Activity类似, 有如下几步</p>
+<ol>
+<li>创建Window<br>Dialog的创建后的实际就是PhoneWindow, 这个过程和Activity的Window创建过程一致</li>
+<li>初始化DecorView并将Dialog的视图添加到DecorView中<br>这个过程也类似, 都是通过Window去添加指定的布局文件.</li>
+<li>将DecorView添加到Window中并显示<br>在Dialog的show方法中, 会通过WindowManager将DecorView添加Window中.</li>
+</ol>
+<p>普通的Dialog有一个特殊之处, 那就是必须采用Activity的Content, 如果采用Application的Content, 那么就会报错. 报的错是没有应用token所导致的, 而应用token一般只有Activity才拥有.</p>
+<p>还有一种方法. 系统Window比较特殊, 他可以不需要token, 因此只需要指定对话框的Window为系统类型就可以正常弹出对话框.</p>
+<pre><code>//JAVA 给Dialog的Window改变为系统级的Window
+dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+//XML 声明权限
+&lt;uses-permission android:name=&quot;android.permission.SYSTEM_ALERT_WINDOW&quot;/&gt;
+</code></pre><h5 id="Toast的Window创建过程"><a href="#Toast的Window创建过程" class="headerlink" title="Toast的Window创建过程"></a>Toast的Window创建过程</h5><p>Toast和Dialog不同, 它的工作过程就稍显复杂. 首先Toast也是基于Window来实现的. 但是由于Toast具有定时取消的功能, 所以系统采用了Handler. 在Toast的内部有两类IPC过程, 第一类是Toast访问NotificationManagerService()后面简称NMS. 第二类是NotificationManagerService回调Toast里的TN接口.</p>
+<p>Toast属于系统Window, 它内部的视图有两种方式指定, 一种是系统默认的样式, 另一种是通过setView方法来指定一个自定义View. 不管如何, 他们都对应Toast的一个View类型的内部成员mNextView. Toast内部提供了cancel和show两个方法. 分别用于显示和隐藏Toast. 他们内部是一个IPC过程.</p>
+<p>显示和隐藏Toast都是需要通过NMS来实现的. 由于NMS运行在系统的进程中, 所以只能通过远程调用的方式来显示和隐藏Toast. 而TN这个类是一个Binder类. 在Toast和NMS进行IPC的过程中, 当NMS处理Toast的显示或隐藏请求时会跨进程回调TN的方法. 这个时候由于TN运行在Binder线程池中, 所以需要通过Handler将其切换到当前主线程. 所以由其可知, Toast无法在没有Looper的线程中弹出, 因为Handler需要使用Looper才能完成切换线程的功能.</p>
+<p>对于非系统应用来说, 最多能同时存在对Toast封装的ToastRecord上限为50个. 这样做是为了防止DOS(Denial of Service). 如果不这样, 当通过大量循环去连续的弹出Toast, 这将会导致其他应用没有机会弹出Toast, 那么对于其他应用的Toast请求, 系统的行为就是拒绝服务, 这就是拒绝服务攻击的含义.</p>
+<p>在ToastRecord被添加到mToastQueue()中后, NMS就会通过showNextToastLocked()方法来显示当前的Toast.</p>
+<p>Toast的显示是由ToastRecord的callback来完成的. 这个callback实际上就是Toast中的TN对象的远程Binder. 通过callback来访问TN中的方法是需要跨进程的. 最终被调用的TN中的方法会运行在发起Toast请求的应用的Binder线程池.</p>
+<p>Toast的隐藏也会通过ToastRecord的callback完成的.同样是一次IPC过程. 方式和Toast显示类似.</p>
+<p>以上基本说明Toast的显示和影响过程实际上是通过Toast中的TN这个类来实现的. 他有两个方法show(), hide(). 分别对应着Toast的显示和隐藏. 由于这两个方法是被NMS以跨进程的方式调用的, 因此他们运行在Binder线程池中. 为了将执行环境切换到Toast请求所在线程中, 在他们内部使用了handler。</p>
+<p>TN的handleShow中会将Toast的视图添加到Window中.<br>TN的handleHide中会将Toast的视图从Window中移除.</p>
+<p><strong>以上三节的总结</strong></p>
+<ol>
+<li>在创建视图并显示出来时，首先是通过创建一个Window对象，然后通过WindowManager对象的 addView(View view, ViewGroup.LayoutParams params); 方法将 contentView 添加到Window中，完成添加和显示视图这两个过程。</li>
+<li>在关闭视图时，通过WindowManager来移除DecorView， mWindowManager.removeViewImmediate( view); 。</li>
+<li>Toast比较特殊，具有定时取消功能，所以系统采用了Handler，内部有两类IPC过程：<ul>
+<li>Toast访问 NotificationManagerService</li>
+<li>NotificationManagerService 回调Toast里的 TN 接口</li>
+</ul>
+</li>
+</ol>
+<p>显示和隐藏Toast都通过NotificationManagerService（ NMS） 来实现，而NMS运行在系统进程中，所以只能通过IPC来进行显示/隐藏Toast。而TN是一个Binder类，在Toast和NMS进行IPC的过程中，当NMS处理Toast的显示/隐藏请求时会跨进程回调TN中的方法，这时由于TN运行在Binder线程池中，所以需要通过Handler将其切换到当前线程（ 即发起Toast请求所在的线程） ，然后通过WindowManager的 addView/removewView 方法真正完成显示和隐藏Toast。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android学习之路/" rel="tag"># Android学习之路</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/11/Android学习之路--消息机制/" rel="next" title="Android学习之路 -- 消息机制">
+                <i class="fa fa-chevron-left"></i> Android学习之路 -- 消息机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/08/Android学习之路--View事件分发(一)/" rel="prev" title="Android学习之路 -- View事件分发(一)">
+                Android学习之路 -- View事件分发(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#理解Window和WindowMananger"><span class="nav-text">理解Window和WindowMananger</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Window和WindowManager"><span class="nav-text">Window和WindowManager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Window的内部机制"><span class="nav-text">Window的内部机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Window的添加过程"><span class="nav-text">Window的添加过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Window的删除过程"><span class="nav-text">Window的删除过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Window的更新过程"><span class="nav-text">Window的更新过程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Window的创建过程"><span class="nav-text">Window的创建过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Activity的Window创建过程"><span class="nav-text">Activity的Window创建过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dialog的Window创建过程"><span class="nav-text">Dialog的Window创建过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Toast的Window创建过程"><span class="nav-text">Toast的Window创建过程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

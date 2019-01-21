@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android学习之路,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="四大组件的工作过程ContentProvider的工作机制ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执">
+<meta name="keywords" content="Android学习之路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习之路 -- 四大组件(ContentProvider)">
+<meta property="og:url" content="http://www.puwenhui.com/2017/07/20/Android学习之路--四大组件(ContentProvider)/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="四大组件的工作过程ContentProvider的工作机制ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-201dfaf3b0b00382.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-32064d612c5deb3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android学习之路 -- 四大组件(ContentProvider)">
+<meta name="twitter:description" content="四大组件的工作过程ContentProvider的工作机制ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1967257-201dfaf3b0b00382.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2017/07/20/Android学习之路--四大组件(ContentProvider)/">
+
+
+
+
+
+  <title>Android学习之路 -- 四大组件(ContentProvider) | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2017/07/20/Android学习之路--四大组件(ContentProvider)/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android学习之路 -- 四大组件(ContentProvider)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-20T23:15:18+08:00">
+                2017-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="四大组件的工作过程"><a href="#四大组件的工作过程" class="headerlink" title="四大组件的工作过程"></a>四大组件的工作过程</h3><h4 id="ContentProvider的工作机制"><a href="#ContentProvider的工作机制" class="headerlink" title="ContentProvider的工作机制"></a>ContentProvider的工作机制</h4><p>ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执行的,这一点在四大组件是少有的现象.<br><img src="https://upload-images.jianshu.io/upload_images/1967257-201dfaf3b0b00382.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ol>
+<li>当一个应用启动时，入口方法是ActivityThread的main方法，其中创建ActivityThread的实例并创建主线程的消息队列；</li>
+<li>ActivityThread的attach方法中会远程调用ActivityManagerService的attachApplication，并将ApplicationThread提供给AMS，ApplicationThread主要用于ActivityThread和AMS之间的通信；</li>
+<li>ActivityManagerService的attachApplication会调用ApplicationThread的bindApplication方法，这个方法会通过H切换到ActivityThread中去执行，即调用handleBindApplication方法；</li>
+<li>handleBindApplication方法会创建Application对象并加载ContentProvider，注意是先加载ContentProvider，然后调用Application的onCreate方法。</li>
+<li>ContentProvider启动后, 外界就可以通过它所提供的增删改查这四个接口来操作ContentProvider中的数据源, 这四个方法都是通过Binder来调用的, 外界无法直接访问ContentProvider, 它只能通过AMS根据URI来获取到对应的ContentProvider的Binder接口IContentProvider, 然后再通过IContentProvider来访问ContentProvider中的数据源.</li>
+</ol>
+<p>ContentProvider的android:multiprocess属性决定它是否是单实例，默认值是false，也就是默认是单实例。当设置为true时，每个调用者的进程中都存在一个ContentProvider对象。</p>
+<p>当调用ContentProvider的insert、delete、update、query方法中的任何一个时，如果ContentProvider所在的进程没有启动的话，那么就会触发ContentProvider的创建，并伴随着ContentProvider所在进程的启动。</p>
+<p>以query调用为例<br><img src="https://upload-images.jianshu.io/upload_images/1967257-32064d612c5deb3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ol>
+<li>首先会获取IContentProvider对象, 不管是通过acquireUnstableProvider()方法还是直接通过acquireProvider()方法, 他们的本质都是一样的, 最终都是通过acquireProvider方法来获取ContentProvider.</li>
+<li>ApplicationContentResolver#acquireProvider()方法并没有处理任何逻辑, 它直接调用了ActivityThread#acquireProvider()</li>
+<li>从ActivityThread中查找是否已经存在了ContentProvider了, 如果存在那么就直接返回. ActivityThread中通过mProviderMap来存储已经启动的ContentProvider对象, 这个集合的存储类型ArrayMap&lt;ProviderKey, ProviderClientRecord&gt; mProviderMap. 如果目前ContentProvider没有启动, 那么就发送一个进程间请求给AMS让其启动项目目标ContentProvider, 最后再通过installProvider()方法来修改引用计数.</li>
+<li>AMS是如何启动ContentProvider的呢?首先会启动ContentProvider所在的进程, 然后再启动ContentProvider. 启动进程是由AMS#startProcessLocked()方法来完成, 其内部主要是通过Process#start()方法来完成一个新进程的启动, 新进程启动后其入口方法为ActivityThread#main()方法。</li>
+<li>ActivityThread#main()是一个静态方法, 在它的内部首先会创建ActivityThread实例并调用attach()方法来进行一系列初始化, 接着就开始进行消息循环. ActivityThread#attach()方法会将Application对象通过AMS#attachApplication方法跨进程传递给AMS, 最终AMS会完成ContentProvider的创建过程.</li>
+<li>AMS#attachApplication()方法调用了attachApplication(), 然后又调用了ApplicationThread#bindApplication(), 这个过程也属于进程通信.bindApplication()方法会发送一个BIND_APPLICATION类型的消息给mH, 这是一个Handler, 它收到消息后会调用ActivityThread#handleBindApplication()方法.</li>
+<li>ActivityThread#handlerBindApplication()则完成了Application的创建以及ContentProvider 可以分为如下四个步骤:<ol>
+<li>创建ContentProvider和Instrumentation</li>
+<li>创建Application对象</li>
+<li>启动当前进程的ContentProvider并调用onCreate()方法. 主要内部实现是installContentProvider()完成了ContentProvider的启动工作, 首先会遍历当前进程的ProviderInfo的列表并一一调用installProvider()方法来启动他们, 接着将已经启动的ContentProvider发布到AMS中, AMS会把他们存储在ProviderMap中, 这样一来外部调用者就可以直接从AMS中获取到ContentProvider. installProvider()内部通过类加载器创建的ContentProvider实例并在方法中调用了attachInfo(), 在这内部调用了ContentProvider#onCreate()</li>
+<li>调用Application#onCreate()</li>
+</ol>
+</li>
+</ol>
+<p>经过了上述的四个步骤, ContentProvider已经启动成功, 并且其所在的进程的Application也已经成功, 这意味着ContentProvider所在的进程已经完成了整个的启动过程, 然后其他应用就可以通过AMS来访问这个ContentProvider了.</p>
+<p>当拿到了ContentProvider以后, 就可以通过它所提供的接口方法来访问它. 这里要注意: 这里的ContentProvider并不是原始的ContentProvider. 而是ContentProvider的Binder类型对象IContentProvider, 而IContentProvider的具体实现是ContentProviderNative和ContentProvider.Transport. 后者继承了前者.</p>
+<p>如果还用query方法来解释流程: 那么最开始其他应用通过AMS获取到ContentProvider的Binder对象就是IContentProvider. 而IContentProvider的实际实现者是ContentProvider.Transport. 因此实际上外部应用调用的时候本质上会以进程间通信的方式调用ContentProvider.Transport的query()方法。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android学习之路/" rel="tag"># Android学习之路</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/03/Android学习之路--四大组件(BroadcastReceiver)/" rel="next" title="Android学习之路 -- 四大组件(BroadcastReceiver)">
+                <i class="fa fa-chevron-left"></i> Android学习之路 -- 四大组件(BroadcastReceiver)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/10/Android学习之路--四大组件(Service)/" rel="prev" title="Android学习之路 -- 四大组件(Service)">
+                Android学习之路 -- 四大组件(Service) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#四大组件的工作过程"><span class="nav-text">四大组件的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ContentProvider的工作机制"><span class="nav-text">ContentProvider的工作机制</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

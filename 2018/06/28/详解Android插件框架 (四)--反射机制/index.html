@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言反射机制是Java的重要特性之一，Android的黑科技源泉，所以熟练掌握了解反射技术的原理是很有必要的。上篇我们说过Java虚拟机通过加载 .jar 文件里的类来执行程序，而我们Android虚拟机Dalvik/ART 确是直接加载的 .dex文件来执行里面的类，dex文件是Android对.jar文件进行优化来的目的是更加适合Android平台的Dalvik/ART使用 .dex文件和Ap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解Android插件框架 (四)--反射机制">
+<meta property="og:url" content="http://www.puwenhui.com/2018/06/28/详解Android插件框架 (四)--反射机制/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="前言反射机制是Java的重要特性之一，Android的黑科技源泉，所以熟练掌握了解反射技术的原理是很有必要的。上篇我们说过Java虚拟机通过加载 .jar 文件里的类来执行程序，而我们Android虚拟机Dalvik/ART 确是直接加载的 .dex文件来执行里面的类，dex文件是Android对.jar文件进行优化来的目的是更加适合Android平台的Dalvik/ART使用 .dex文件和Ap">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-dc8ce34800e9573e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1967257-ec25ece8b3796953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.446Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="详解Android插件框架 (四)--反射机制">
+<meta name="twitter:description" content="前言反射机制是Java的重要特性之一，Android的黑科技源泉，所以熟练掌握了解反射技术的原理是很有必要的。上篇我们说过Java虚拟机通过加载 .jar 文件里的类来执行程序，而我们Android虚拟机Dalvik/ART 确是直接加载的 .dex文件来执行里面的类，dex文件是Android对.jar文件进行优化来的目的是更加适合Android平台的Dalvik/ART使用 .dex文件和Ap">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1967257-dc8ce34800e9573e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2018/06/28/详解Android插件框架 (四)--反射机制/">
+
+
+
+
+
+  <title>详解Android插件框架 (四)--反射机制 | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2018/06/28/详解Android插件框架 (四)--反射机制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">详解Android插件框架 (四)--反射机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-28T18:15:30+08:00">
+                2018-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>反射机制是Java的重要特性之一，Android的黑科技源泉，所以熟练掌握了解反射技术的原理是很有必要的。上篇我们说过Java虚拟机通过加载 .jar 文件里的类来执行程序，而我们Android虚拟机Dalvik/ART 确是直接加载的 .dex文件来执行里面的类，dex文件是Android对.jar文件进行优化来的<br>目的是更加适合Android平台的Dalvik/ART使用</p>
+<h2 id="dex文件和Apk"><a href="#dex文件和Apk" class="headerlink" title=".dex文件和Apk"></a>.dex文件和Apk</h2><p>一般来说我们可以通过 Java JDK  java代码编译成为.class 文件<br>然后再使用jar把 .class 文件打包成.jar<br>然后我们可以使用Android SDK中给我们提供了工具来讲.jar文件优化成.dex文件<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dx <span class="comment">--dex --output=A.dex B.jar</span></span><br></pre></td></tr></table></figure></p>
+<p>大家可以在“android-sdk\build-tools\版本\”文件中找到<br>其实我们应用的APK文件主要就是Dex文件 + 资源 + Asset文件 + AndroidManifest文件</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1967257-dc8ce34800e9573e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>classes.dex 这个就是Apk的dex文件<br>所以对于虚拟机来说Apk也等同于一个Dex文件</p>
+<h2 id="加载dex"><a href="#加载dex" class="headerlink" title="加载dex"></a>加载dex</h2><p>这个我们上一篇文章说过了，就是使用我们的Classloader去加载一个dex文件<br>我们一般会使用DexClassLoader去加载，需要注意的是，我们DexClassLoader先将dex文件拷贝到<br>应用所在的data/packagename/的私有文件中，这样DexClassLoader才能够有权限加载，<br>至于原因，主要是问了安全，前面文章也介绍过，这里看一下DexClassLoader的构造就懂了<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DexClassLoader(<span class="built_in">String</span> dexPath, <span class="built_in">String</span> optimizedDirectory, <span class="built_in">String</span> librarySearchPath, ClassLoader <span class="keyword">parent</span>);</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<ul>
+<li>dexPath：dex文件所在SD卡路径</li>
+<li>optimizedDirectory：dex加压路径 一般是App私有目录 data/packagename/xxx路径</li>
+<li>librarySearchPath：指目标类中所使用的C/C++库存放的路径</li>
+<li>classload：是指该装载器的父装载器,一般为当前执行类的装载器</li>
+</ul>
+</blockquote>
+<h2 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h2><p><img src="https://upload-images.jianshu.io/upload_images/1967257-ec25ece8b3796953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>说实话，本来这一篇想好好把我的反射技巧都秀一秀，但是仔细想了一下，要秀一秀估计就要再开三篇文章来具体讲反射，害怕把大家带跑偏了，这个系列文章，我们还是关注插件技术吧，反射作为基础工具，我相信很多人也使用过，所以我这里就偷个懒吧。而且我们后面讲插件框架时候，可从源码中学到很多优秀的反射技巧。我们简单来看看，刚才加载的dex我们如何使用里面的函数<br><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 先用Classloader加载dex</span></span><br><span class="line">DexClassLoader dexClassLoader = <span class="keyword">new</span> <span class="type">DexClassLoader</span>(optimizedDexOutputPath.getAbsolutePath(), dexOutputDir.getAbsolutePath(), <span class="literal">null</span>, getClassLoader());</span><br><span class="line"></span><br><span class="line">Class libProviderClazz = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 得到Dex中某个类</span></span><br><span class="line">    libProviderClazz=dexClassLoader.loadClass(<span class="string">"com.karlpu.MyClass"</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 遍历类里所有方法</span></span><br><span class="line">    Method[]methods=libProviderClazz.getDeclaredMethods();</span><br><span class="line">    <span class="keyword">for</span>(int i=<span class="number">0</span>;i&lt;methods.length;i++)&#123;</span><br><span class="line">    Log.e(TAG,methods[i].toString());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取方法</span></span><br><span class="line">    Method start=libProviderClazz.getDeclaredMethod(<span class="string">"func"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 把方法设为public，让外部可以调用</span></span><br><span class="line">    start.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 调用方法并获取返回值</span></span><br><span class="line">    <span class="keyword">String</span> string=(<span class="keyword">String</span>)start.invoke(libProviderClazz.<span class="keyword">new</span><span class="type">Instance</span>());</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">catch</span>(Exception exception)&#123;</span><br><span class="line">	    exception.printStackTrace();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样我们就调用了dex文件中的一个方法。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>到这里我们应该知道了，其实Android可以动态执行代码，只要我们在合适的时候讲Dex加载进Classloader然后就可以通过反射去调用相应的方法。理论我们可以将一个APK加载进我们自己的APK中然后通过反射调用它的方法。这其实就是个插件了。<br>但是问题依然存在：</p>
+<blockquote>
+<ul>
+<li>如果插件的dex文件中的代码用了资源，我们依然无法调用该代码</li>
+<li>如果插件的dex文件中使用了四大组件，我们也依然无法合法启动组件</li>
+</ul>
+</blockquote>
+<p>具体原因我在之前文章说过，就不在赘述，其实这两个问题，就是我们插件框架主要要解决的问题，后面我们来一个一个搞定，下篇文章，我们需要温习一下动态代理的知识，因为动态代理模式<br>和反射的配合使得我们能够使用Hook技术来解决上面两个问题。</p>
+<p>《详解Android插件框架 (五) — 动态代理》</p>
+<p>Ps：才疏学浅有问题请指出来~如需转载文章请注明 by karlpu 谢谢!</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/27/详解Android插件框架 (三)--ClassLoader/" rel="next" title="详解Android插件框架 (三)--ClassLoader">
+                <i class="fa fa-chevron-left"></i> 详解Android插件框架 (三)--ClassLoader
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/29/详解Android插件框架 (五)--Hook与代理模式/" rel="prev" title="详解Android插件框架 (五)--Hook与代理模式">
+                详解Android插件框架 (五)--Hook与代理模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dex文件和Apk"><span class="nav-number">2.</span> <span class="nav-text">.dex文件和Apk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加载dex"><span class="nav-number">3.</span> <span class="nav-text">加载dex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反射"><span class="nav-number">4.</span> <span class="nav-text">反射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

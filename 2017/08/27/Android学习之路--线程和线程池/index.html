@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android学习之路,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Android的线程和线程池在Android系统，线程主要分为主线程和子线程，主线程处理和界面相关的事情，而子线程一般用于执行耗时操作。AsyncTask底层是线程池；IntentService/HandlerThread底层是线程； 在Android中，线程的形态有很多种：  AsyncTask封装了线程池和Handler。 HandlerThread是具有消息循环的线程，内部可以使用handl">
+<meta name="keywords" content="Android学习之路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习之路 -- 线程和线程池">
+<meta property="og:url" content="http://www.puwenhui.com/2017/08/27/Android学习之路--线程和线程池/index.html">
+<meta property="og:site_name" content="蒲文辉">
+<meta property="og:description" content="Android的线程和线程池在Android系统，线程主要分为主线程和子线程，主线程处理和界面相关的事情，而子线程一般用于执行耗时操作。AsyncTask底层是线程池；IntentService/HandlerThread底层是线程； 在Android中，线程的形态有很多种：  AsyncTask封装了线程池和Handler。 HandlerThread是具有消息循环的线程，内部可以使用handl">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-21T03:33:56.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android学习之路 -- 线程和线程池">
+<meta name="twitter:description" content="Android的线程和线程池在Android系统，线程主要分为主线程和子线程，主线程处理和界面相关的事情，而子线程一般用于执行耗时操作。AsyncTask底层是线程池；IntentService/HandlerThread底层是线程； 在Android中，线程的形态有很多种：  AsyncTask封装了线程池和Handler。 HandlerThread是具有消息循环的线程，内部可以使用handl">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.puwenhui.com/2017/08/27/Android学习之路--线程和线程池/">
+
+
+
+
+
+  <title>Android学习之路 -- 线程和线程池 | 蒲文辉</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?03c44cf310311201890670c1e86170cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蒲文辉</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个伪文艺90后Geek</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.puwenhui.com/2017/08/27/Android学习之路--线程和线程池/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kael Pu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蒲文辉">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android学习之路 -- 线程和线程池</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-27T00:24:33+08:00">
+                2017-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Android的线程和线程池"><a href="#Android的线程和线程池" class="headerlink" title="Android的线程和线程池"></a>Android的线程和线程池</h3><p>在Android系统，线程主要分为主线程和子线程，主线程处理和界面相关的事情，而子线程一般用于执行耗时操作。AsyncTask底层是线程池；IntentService/HandlerThread底层是线程；</p>
+<p>在Android中，线程的形态有很多种：</p>
+<ol>
+<li>AsyncTask封装了线程池和Handler。</li>
+<li>HandlerThread是具有消息循环的线程，内部可以使用handler</li>
+<li>IntentService是一种Service，内部采用HandlerThread来执行任务，当任务执行完毕后IntentService会自动退出。由于它是一种Service，所以不容易被系统杀死</li>
+</ol>
+<p>操作系统中，线程是操作系统调度的最小单元，同时线程又是一种受限的系统资源，其创建和销毁都会有相应的开销。同时当系统存在大量线程时，系统会通过时间片轮转的方式调度每个线程，因此线程不可能做到绝对的并发，除非线程数量小于等于CPU的核心数。</p>
+<p>频繁创建销毁线程不明智，使用线程池是正确的做法。线程池会缓存一定数量的线程，通过线程池就可以避免因为频繁创建和销毁线程所带来的系统开销。</p>
+<h4 id="主线程和子线程"><a href="#主线程和子线程" class="headerlink" title="主线程和子线程"></a>主线程和子线程</h4><p>主线程主要处理界面交互逻辑，由于用户随时会和界面交互，所以主线程在任何时候都需要有较高响应速度，则不能执行耗时的任务；</p>
+<p>android3.0开始，网络访问将会失败并抛出NetworkOnMainThreadException这个异常，这样做是为了避免主线程由于被耗时操作所阻塞从而现ANR现象</p>
+<h4 id="Android中的线程形态"><a href="#Android中的线程形态" class="headerlink" title="Android中的线程形态"></a>Android中的线程形态</h4><h5 id="AsyncTask"><a href="#AsyncTask" class="headerlink" title="AsyncTask"></a>AsyncTask</h5><p>AsyncTask是一种轻量级的异步任务类, 他可以在线程池中执行后台任务, 然后把执行的进度和最终的结果传递给主线程并在主线程更新UI. 从实现上来说. AsyncTask封装了Thread和Handler, 通过AsyncTask可以更加方便地执行后台任务,但是AsyncTask并不适合进行特别耗时的后台任务，对于特别耗时的任务来说, 建议使用线程池。</p>
+<p>AsyncTask就是一个抽象的泛型类. 这三个泛型的意义</p>
+<ol>
+<li>Params：参数的类型</li>
+<li>Progress：后台任务的执行进度的类型</li>
+<li>Result：后台任务的返回结果的类型</li>
+</ol>
+<p>如果不需要传递具体的参数, 那么这三个泛型参数可以用Void来代替.</p>
+<p>四个方法 ：</p>
+<ul>
+<li>onPreExecute()<br>在主线程执行, 在异步任务执行之前, 此方法会被调用, 一般可以用于做一些准备工作</li>
+<li>doInBackground()<br>在线程池中执行, 此方法用于执行异步任务, 参数params表示异步任务的输入参数. 在此方法中可以通过publishProgress()方法来更新任务的进度, publishProgress()方法会调用onProgressUpdate()方法. 另外此方法需要返回计算结果给onPostExecute()</li>
+<li>onProgressUpdate()<br>在主线程执行,在异步任务执行之后, 此方法会被调用, 其中result参数是后台任务的返回值, 即doInBackground()的返回值.</li>
+<li>onPostExecute()<br>在主线程执行, 在异步任务执行之后, 此方法会被调用, 其中result参数是后台任务的返回值, 即doInBackground的返回值.</li>
+</ul>
+<p>除了上述的四种方法,还有onCancelled(), 它同样在主线程执行, 当异步任务被取消时, onCancelled()方法会被调用, 这个时候onPostExecute()则不会被调用.</p>
+<p>AsyncTask在使用过程中有一些条件限制</p>
+<ol>
+<li>AsyncTask的类必须在主线程被加载, 这就意味着第一次访问AsyncTask必须发生在主线程, 这个问题不是绝对, 因为在Android 4.1及以上的版本已经被系统自动完成. 在Android 5.0的源码中, 可以看到ActivityThread#main()会调用AsyncTask#init()方法.</li>
+<li>AsyncTask的对象必须在主线程中创建.</li>
+<li>execute方法必须在UI线程调用.</li>
+<li>不要在程序中直接调用onPreExecute(), onPostExecute(), doInBackground和onProgressUpdate()</li>
+<li>一个AsyncTask对象只能执行一次, 即只能调用一次execute()方法, 否则会报运行时异常.</li>
+<li>在Android 1.6之前, AsyncTask是串行执行任务的; Android 1.6的时候AsyncTask开始采用线程池里处理并行任务; 但是Android 3.0开始, 为了避免AsyncTask带来的并发错误, AsyncTask又采用了一个线程来串行的执行任务. 尽管如此在3.0以后, 仍然可以通过AsyncTask#executeOnExecutor()方法来并行执行任务.</li>
+</ol>
+<h5 id="AsyncTask的工作原理"><a href="#AsyncTask的工作原理" class="headerlink" title="AsyncTask的工作原理"></a>AsyncTask的工作原理</h5><p>AsyncTask中有两个线程池(SerialExecutor和THREAD_POOL_EXECUTOR)和一个Handler(InternalHandler), 其中线程池SerialExecutor用于任务的排列, 而线程池THREAD_POOL_EXECUTOR用于真正的执行任务, 而InternalHandler用于将执行环境从线程切换到主线程, 其本质仍然是线程的调用过程.</p>
+<p>AsyncTask的排队过程：首先系统会把AsyncTask#Params参数封装成FutureTask对象, FutureTask是一个并发类, 在这里充当了Runnable的作用. 接着这个FutureTask会交给SerialExecutor#execute()方法去处理. 这个方法首先会把FutureTask对象插入到任务队列mTasks中, 如果这个时候没有正在活动AsyncTask任务, 那么就会调用SerialExecutor#scheduleNext()方法来执行下一个AsyncTask任务. 同时当一个AsyncTask任务执行完后, AsyncTask会继续执行其他任务直到所有的任务都执行完毕为止, 从这一点可以看出, 在默认情况下, AsyncTask是串行执行的</p>
+<h5 id="HandlerThread"><a href="#HandlerThread" class="headerlink" title="HandlerThread"></a>HandlerThread</h5><p>HandlerThread继承了Thread, 它是一种可以使用Handler的Thread, 它的实现也很简单, 就是run方法中通过Looper.prepare()来创建消息队列, 并通过Looper.loop()来开启消息循环, 这样在实际的使用中就允许在HandlerThread中创建Handler.</p>
+<p>从HandlerThread的实现来看, 它和普通的Thread有显著的不同之处. 普通的Thread主要用于在run方法中执行一个耗时任务; 而HandlerThread在内部创建了消息队列, 外界需要通过Handler的消息方式来通知HandlerThread执行一个具体的任务. HandlerThread是一个很有用的类, 在Android中一个具体使用场景就是IntentService.</p>
+<p>由于HandlerThread#run()是一个无线循环方法, 因此当明确不需要再使用HandlerThread时, 最好通过quit()或者quitSafely()方法来终止线程的执行.</p>
+<h5 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h5><p>IntentSercie是一种特殊的Service，继承了Service并且是抽象类，任务执行完成后会自动停止，优先级远高于普通线程，适合执行一些高优先级的后台任务； IntentService封装了HandlerThread和Handler</p>
+<ol>
+<li>onCreate方法自动创建一个HandlerThread</li>
+<li>用它的Looper构造了一个Handler对象mServiceHandler，这样通过mServiceHandler发送的消息都会在HandlerThread执行；</li>
+<li>IntentServiced的onHandlerIntent方法是一个抽象方法，需要在子类实现，onHandlerIntent方法执行后，stopSelt(int startId)就会停止服务，如果存在多个后台任务，执行完最后一个stopSelf(int startId)才会停止服务。</li>
+</ol>
+<h4 id="Android线程池"><a href="#Android线程池" class="headerlink" title="Android线程池"></a>Android线程池</h4><p>优点：</p>
+<ol>
+<li>重用线程池的线程，减少线程创建和销毁带来的性能开销</li>
+<li>控制线程池的最大并发数，避免大量线程互相抢系统资源导致阻塞</li>
+<li>提供定时执行和间隔循环执行功能</li>
+</ol>
+<p>Android中的线程池的概念来源于Java中的Executor, Executor是一个接口, 真正的线程池的实现为ThreadPoolExecutor.Android的线程池 大部分都是通 过Executor提供的工厂方法创建的。 ThreadPoolExecutor提供了一系列参数来配制线程池, 通过不同的参数可以创建不同的线程池. 而从功能的特性来分的话可以分成四类.</p>
+<h5 id="ThreadPoolExecutor"><a href="#ThreadPoolExecutor" class="headerlink" title="ThreadPoolExecutor"></a>ThreadPoolExecutor</h5><p>ThreadPoolExecutor是线程池的真正实现, 它的构造方法提供了一系列参数来配置线程池, 这些参数将会直接影响到线程池的功能特性.</p>
+<pre><code>public ThreadPoolExecutor(int corePoolSize,
+                 int maximumPoolSize,
+                 long keepAliveTime,
+                 TimeUnit unit,
+                 BlockingQueue&lt;Runnable&gt; workQueue) {
+    this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+    Executors.defaultThreadFactory(), defaultHandler);
+}
+</code></pre><ul>
+<li>corePoolSize: 线程池的核心线程数, 默认情况下, 核心线程会在线程池中一直存活, 即使都处于闲置状态. 如果将ThreadPoolExecutor#allowCoreThreadTimeOut属性设置为true, 那么闲置的核心线程在等待新任务到来时会有超时的策略, 这个时间间隔由keepAliveTime属性来决定. 当等待时间超过了keepAliveTime设定的值那么核心线程将会终止.</li>
+<li>maximumPoolSize: 线程池所能容纳的最大线程数, 当活动线程数达到这个数值之后, 后续的任务将会被阻塞.</li>
+<li>keepAliveTime: 非核心线程闲置的超时时长, 超过这个时长, 非核心线程就会被回收. allowCoreThreadTimeOut这个属性为true的时候, 这个属性同样会作用于核心线程.</li>
+<li>unit: 用于指定keepAliveTime参数的时间单位, 这是一个枚举, 常用的有TimeUtil.MILLISECONDS(毫秒), TimeUtil.SECONDS(秒)以及TimeUtil.MINUTES(分)</li>
+<li>workQueue: 线程池中的任务队列, 通过线程池的execute方法提交的Runnable对象会存储在这个参数中.</li>
+<li>threadFactory: 线程工厂, 为线程池提供创建新线程的功能. ThreadFactory是一个接口.</li>
+</ul>
+<p>ThreadPoolExecutor执行任务大致遵循如下规则:</p>
+<ol>
+<li>如果线程池中的线程数量未达到核心线程的数量, 那么会直接启动一个核心线程来执行任务.</li>
+<li>如果线程池中的线程数量已经达到或者超过核心线程的数量, 那么任务会被插入到任务队列中排队等待执行.</li>
+<li>如果在步骤2中无法将任务插入到任务队列中, 这通常是因为任务队列已满, 这个时候如果线程数量未达到线程池的规定的最大值, 那么会立刻启动一个非核心线程来执行任务.</li>
+<li>如果步骤3中的线程数量已经达到最大值的时候, 那么会拒绝执行此任务,ThreadPoolExecutor会调用RejectedExecution方法来通知调用者.</li>
+</ol>
+<p>AsyncTask的THREAD_POOL_EXECUTOR线程池配置:</p>
+<ol>
+<li>核心线程数等于CPU核心数+1</li>
+<li>线程池最大线程数为CPU核心数的2倍+1</li>
+<li>核心线程无超时机制，非核心线程的闲置超时时间为1秒</li>
+<li>任务队列容量是128</li>
+</ol>
+<h5 id="线程池的分类"><a href="#线程池的分类" class="headerlink" title="线程池的分类"></a>线程池的分类</h5><p><strong>FixedThreadPool</strong><br>通过Executor#newFixedThreadPool()方法来创建. 它是一种线程数量固定的线程池, 当线程处于空闲状态时, 它们并不会被回收, 除非线程池关闭了. 当所有的线程都处于活动状态时, 新任务都会处于等待状态, 直到有线程空闲出来. 由于FixedThreadPool只有核心线程并且这些核心线程不会被回收, 这意味着它能够更加快速地响应外界的请求.</p>
+<p><strong> CachedThreadPool</strong><br>通过Executor#newCachedThreadPool()方法来创建. 它是一种线程数量不定的线程池, 它只有非核心线程, 并且其最大值线程数为Integer.MAX_VALUE. 这就可以认为这个最大线程数为任意大了. 当线程池中的线程都处于活动的时候, 线程池会创建新的线程来处理新任务, 否则就会利用空闲的线程来处理新任务. 线程池中的空闲线程都有超时机制, 这个超时时长为60S, 超过这个时间那么空闲线程就会被回收.</p>
+<p>和FixedThreadPool不同的是, CachedThreadPool的任务队列其实相当于一个空集合, 这将导致任何任务都会立即被执行, 因为在这种场景下SynchronousQueue是无法插入任务的. SynchronousQueue是一个非常特殊的队列, 在很多情况下可以把它简单理解为一个无法存储元素的队列. 在实际使用中很少使用.这类线程比较适合执行大量的耗时较少的任务</p>
+<p><strong>ScheduledThreadPool</strong><br>通过Executor#newScheduledThreadPool()方法来创建. 它的核心线程数量是固定的, 而非核心线程数是没有限制的, 并且当非核心线程闲置时会立刻被回收掉. 这类线程池用于执行定时任务和具有固定周期的重复任务</p>
+<p><strong>SingleThreadExecutor</strong><br>通过Executor#newSingleThreadPool()方法来创建. 这类线程池内部只有一个核心线程, 它确保所有的任务都在同一个线程中按顺序执行. 这类线程池意义在于统一所有的外界任务到一个线程中, 这使得在这些任务之间不需要处理线程同步的问题</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Kael Pu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android学习之路/" rel="tag"># Android学习之路</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/10/Android学习之路--四大组件(Service)/" rel="next" title="Android学习之路 -- 四大组件(Service)">
+                <i class="fa fa-chevron-left"></i> Android学习之路 -- 四大组件(Service)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/11/Android学习之路--插件化(ClassLoader)/" rel="prev" title="Android学习之路 -- 插件化(ClassLoader)">
+                Android学习之路 -- 插件化(ClassLoader) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzc2NC8xNDI5NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/favicon.png" alt="Kael Pu">
+            
+              <p class="site-author-name" itemprop="name">Kael Pu</p>
+              <p class="site-description motion-element" itemprop="description">我的技术成长之路</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KaelPu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/0dd2ffd74854" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android的线程和线程池"><span class="nav-text">Android的线程和线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#主线程和子线程"><span class="nav-text">主线程和子线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android中的线程形态"><span class="nav-text">Android中的线程形态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#AsyncTask"><span class="nav-text">AsyncTask</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AsyncTask的工作原理"><span class="nav-text">AsyncTask的工作原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HandlerThread"><span class="nav-text">HandlerThread</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IntentService"><span class="nav-text">IntentService</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android线程池"><span class="nav-text">Android线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ThreadPoolExecutor"><span class="nav-text">ThreadPoolExecutor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程池的分类"><span class="nav-text">线程池的分类</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kael Pu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user">本站访客数</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye">总访问</i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      人次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
