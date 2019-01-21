@@ -319,7 +319,7 @@
       
 
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>我们知道一个Android应用就是一个Apk文件，我们可以通过安装的方式将它安装到手机上，那么如果我们更新了新功能或者修复了Bug，我们该怎么让用户得到这次更新呢？目前主流的有以下三种方法</p>
+        <h2><span id="简介">简介</span></h2><p>我们知道一个Android应用就是一个Apk文件，我们可以通过安装的方式将它安装到手机上，那么如果我们更新了新功能或者修复了Bug，我们该怎么让用户得到这次更新呢？目前主流的有以下三种方法</p>
 <blockquote>
 <ul>
 <li>发布Apk，让用户重新下载安装</li>
@@ -328,7 +328,7 @@
 </ul>
 </blockquote>
 <p>这三种方法各自的优势和劣势：<br>发布Apk是常规的方式，原生方法，但是干扰用户，更新需要重装<br>热补丁技术，能修复局部逻辑，无法更新UI，以及系统组件<br>插件框架：让你的程序成为一个沙盒，可以在你程序中运行其他apk程序，所以如果需要一个新功能，重写一个应用程序，把它Apk文件下发，用户不需要重新安装，也基本无感知，再他下次开启应用时候，这个新的完整模块就出现在了他的界面上了。</p>
-<h2 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h2><p>Android的插件化技术最早大概是2012年出现，当时主要是从热补丁的思想衍生出来，实现的思想也基本是通过动态代理来添加中间层，实现Activity类的动态加载，从而实现插件化，不过问题也很多，后来慢慢出现采用Hook技术，通过Hook住系统的一些关键函数来达到模拟沙盒环境的能力，然而这种技术也成为了目前主流插件框架所使用的技术，不同在于对于Hook点的选取。然而Hook多了影响稳定性，但是会简便插件开发或者可以完全实现插件开发和普通开发Apk无差异，Hook少了稳定性提高，插件开发可能需要遵循一点规则。所以很多热门插件框架之间其实就是Hook多少、稳定性、插件开发难度这三点之间的取舍和平衡。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-948b8a43aca9f532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2><span id="现状">现状</span></h2><p>Android的插件化技术最早大概是2012年出现，当时主要是从热补丁的思想衍生出来，实现的思想也基本是通过动态代理来添加中间层，实现Activity类的动态加载，从而实现插件化，不过问题也很多，后来慢慢出现采用Hook技术，通过Hook住系统的一些关键函数来达到模拟沙盒环境的能力，然而这种技术也成为了目前主流插件框架所使用的技术，不同在于对于Hook点的选取。然而Hook多了影响稳定性，但是会简便插件开发或者可以完全实现插件开发和普通开发Apk无差异，Hook少了稳定性提高，插件开发可能需要遵循一点规则。所以很多热门插件框架之间其实就是Hook多少、稳定性、插件开发难度这三点之间的取舍和平衡。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-948b8a43aca9f532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>VirtualApk 和 Replugin都是插件框架<br>Small 、Atlas应该算是组件框架<br>VirtualApp 这个应该算是一个沙盒框架</p>
 <p>插件化就是将一个app分为一个宿主和多个模块（插件），宿主是被真正安装到设备的apk，负责加载插件，每个插件都是一个独立的apk，最终打包发布时宿主和插件分开或者联合打包。</p>
 <p>组件化也是将一个app分为一个宿主和多个模块（组件），每个组件可以是一个单独的模块，也可以相互依赖，最终打包发布时宿主和组件打包成一个apk。</p>
@@ -337,13 +337,13 @@
 <p>看晕了？不要紧，<br>你就知道 插件化是先装宿主App，然后由它来安装插件，这个过程是在用户手机上完成<br>组件化是能独立调试每个组件，编译时候打包在一起 构成一个Apk，这个过程还是在工程阶段。</p>
 <p>虽然这三钟技术框架看似完全不同，但是他们所运用的Hook思想是一脉相传。因为他们要做的首要任务都是如何欺骗过Android系统，使得原本不合法的代码，变得合法且可以执行。用古人的话说这就叫 “ 黑科技 ”。</p>
 <p><strong> 本系列的文章我们主要来讲插件化框架，也就是VirtualApk 和 Replugin这类框架主要实现的思想和技术，先打个底。</strong></p>
-<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><p>我们先来看看VirtualApk 和 Replugin这两个插件框架自己的介绍</p>
-<h3 id="VirtualAPk"><a href="#VirtualAPk" class="headerlink" title="VirtualAPk"></a>VirtualAPk</h3><p><img src="https://upload-images.jianshu.io/upload_images/1967257-1d4947ebbee041df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h3 id="Replugin"><a href="#Replugin" class="headerlink" title="Replugin"></a>Replugin</h3><p><img src="https://upload-images.jianshu.io/upload_images/1967257-1a6f68289aa90928.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2><span id="优势">优势</span></h2><p>我们先来看看VirtualApk 和 Replugin这两个插件框架自己的介绍</p>
+<h3><span id="virtualapk">VirtualAPk</span></h3><p><img src="https://upload-images.jianshu.io/upload_images/1967257-1d4947ebbee041df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3><span id="replugin">Replugin</span></h3><p><img src="https://upload-images.jianshu.io/upload_images/1967257-1a6f68289aa90928.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>使用插件化会给项目带来的好处：<br>1、功能模块按需更新，使得发布宿主Apk文件非常小<br>2、宿主和插件完全隔离开发编译，充分解耦模块，<br>3、提高编译速度，高效并行开发。<br>4、永远告别65536方法数超标问题，插件按需加载，内存占用低<br>5、用户无感知发布新功能模块，修复Bug ,避免重复下载更新App </p>
 <p>对于开发者来的好处：<br>1、随着项目的复杂和庞大，插件框架是个必经的技术方案，前景光明<br>2、插件框架的技术点，涵盖了Android系统的大部分核心知识，这些知识能帮你从系统层全面的了解Android系统的运行机制和原理。<br>3、最后一点非常重要：插件框架技术是一个黑科技，玩起来非常的酷！</p>
-<h2 id="劣势"><a href="#劣势" class="headerlink" title="劣势"></a>劣势</h2><p>使用插件化会给项目带来的问题：<br>1、项目稳定性问题(不过目前来看 上面所说道的两个成熟的框架，由于hook极少，稳定性非常可靠)<br>2、由于插件解耦特性，可能会对集成构建带来一些额外工作<br>3、学习成本，正所谓成也萧何败也萧何，要想驾驭插件框架，还是需要一定研究和思考<br>4、杀鸡用牛刀！</p>
-<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>宗上所述，插件框架非常适合一个业务复杂或者项目多样的庞大App工程，它就像把手术刀，<br>像庖丁解牛一般，帮你在一个复杂的业务逻辑下，依然有一个充分解耦，清晰的项目架构，<br>而且动态更新功能模块也是它最大的杀手锏，一个庞大的App或许发布时候只有很小的体量。<br>如果是个中小型项目，完全没必要用插件框架，用了反而会多出很多不必要的麻烦(不过话说现在还有小型App么?)<br>这篇文章作为系列文章的开山之作，主要还是为让大家对插件框架有个初步的认识，下一篇《详解Android插件框架(二) — 插件基础Classload》 将会正式开始和大家从零开始一步一步认识插件框架技术。</p>
+<h2><span id="劣势">劣势</span></h2><p>使用插件化会给项目带来的问题：<br>1、项目稳定性问题(不过目前来看 上面所说道的两个成熟的框架，由于hook极少，稳定性非常可靠)<br>2、由于插件解耦特性，可能会对集成构建带来一些额外工作<br>3、学习成本，正所谓成也萧何败也萧何，要想驾驭插件框架，还是需要一定研究和思考<br>4、杀鸡用牛刀！</p>
+<h2><span id="结束语">结束语</span></h2><p>宗上所述，插件框架非常适合一个业务复杂或者项目多样的庞大App工程，它就像把手术刀，<br>像庖丁解牛一般，帮你在一个复杂的业务逻辑下，依然有一个充分解耦，清晰的项目架构，<br>而且动态更新功能模块也是它最大的杀手锏，一个庞大的App或许发布时候只有很小的体量。<br>如果是个中小型项目，完全没必要用插件框架，用了反而会多出很多不必要的麻烦(不过话说现在还有小型App么?)<br>这篇文章作为系列文章的开山之作，主要还是为让大家对插件框架有个初步的认识，下一篇《详解Android插件框架(二) — 插件基础Classload》 将会正式开始和大家从零开始一步一步认识插件框架技术。</p>
 <p>PS：才疏学浅有问题请指出来~如需转载文章请注明 by karlpu 谢谢!</p>
 
       
@@ -551,7 +551,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现状"><span class="nav-number">2.</span> <span class="nav-text">现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优势"><span class="nav-number">3.</span> <span class="nav-text">优势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VirtualAPk"><span class="nav-number">3.1.</span> <span class="nav-text">VirtualAPk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replugin"><span class="nav-number">3.2.</span> <span class="nav-text">Replugin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#劣势"><span class="nav-number">4.</span> <span class="nav-text">劣势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束语"><span class="nav-number">5.</span> <span class="nav-text">结束语</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">优势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">3.1.</span> <span class="nav-text">VirtualAPk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">3.2.</span> <span class="nav-text">Replugin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">劣势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">结束语</span></a></li></ol></div>
             
 
           </div>

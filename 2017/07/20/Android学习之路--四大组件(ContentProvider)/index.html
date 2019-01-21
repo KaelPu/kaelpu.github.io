@@ -318,7 +318,7 @@
       
 
       
-        <h3 id="四大组件的工作过程"><a href="#四大组件的工作过程" class="headerlink" title="四大组件的工作过程"></a>四大组件的工作过程</h3><h4 id="ContentProvider的工作机制"><a href="#ContentProvider的工作机制" class="headerlink" title="ContentProvider的工作机制"></a>ContentProvider的工作机制</h4><p>ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执行的,这一点在四大组件是少有的现象.<br><img src="https://upload-images.jianshu.io/upload_images/1967257-201dfaf3b0b00382.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+        <h3><span id="四大组件的工作过程">四大组件的工作过程</span></h3><h4><span id="contentprovider的工作机制">ContentProvider的工作机制</span></h4><p>ContentProvider是一种内容共享型组件, 它通过Binder向其他组件乃至其他应用提供数据. 当ContentProvider所在的进程启动时, ContentProvider会同时启动并发布到AMS中. 要注意:这个时候ContentProvider的onCreate()方法是先于Application的onCreate()执行的,这一点在四大组件是少有的现象.<br><img src="https://upload-images.jianshu.io/upload_images/1967257-201dfaf3b0b00382.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <ol>
 <li>当一个应用启动时，入口方法是ActivityThread的main方法，其中创建ActivityThread的实例并创建主线程的消息队列；</li>
 <li>ActivityThread的attach方法中会远程调用ActivityManagerService的attachApplication，并将ApplicationThread提供给AMS，ApplicationThread主要用于ActivityThread和AMS之间的通信；</li>
@@ -559,7 +559,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#四大组件的工作过程"><span class="nav-text">四大组件的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ContentProvider的工作机制"><span class="nav-text">ContentProvider的工作机制</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">四大组件的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">ContentProvider的工作机制</span></a></li></ol></li></ol></div>
             
 
           </div>

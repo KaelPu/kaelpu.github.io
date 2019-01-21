@@ -318,7 +318,7 @@
       
 
       
-        <h3 id="Android-IPC"><a href="#Android-IPC" class="headerlink" title="Android IPC"></a>Android IPC</h3><h4 id="Android-IPC-简介"><a href="#Android-IPC-简介" class="headerlink" title="Android IPC 简介"></a>Android IPC 简介</h4><ul>
+        <h3><span id="android-ipc">Android IPC</span></h3><h4><span id="android-ipc-简介">Android IPC 简介</span></h4><ul>
 <li>IPC即Inter-Process Communication，含义为进程间通信或者跨进程通信，是指两个进程之间进行数据交换的过程。</li>
 <li>线程是CPU调度的最小单元，是一种有限的系统资源。进程一般指一个执行单元，在PC和移动设备上是指一个程序或者应用。进程与线程是包含与被包含的关系。一个进程可以包含多个线程。最简单的情况下一个进程只有一个线程，即主线程（ 例如Android的UI线程） 。</li>
 <li>任何操作系统都需要有相应的IPC机制。如Windows上的剪贴板、管道和邮槽；Linux上命名管道、共享内容、信号量等。Android中最有特色的进程间通信方式就是binder，另外还支持socket。contentProvider是Android底层实现的进程间通信。</li>
@@ -329,14 +329,14 @@
 </ul>
 </li>
 </ul>
-<h4 id="Android中的多进程模式"><a href="#Android中的多进程模式" class="headerlink" title="Android中的多进程模式"></a>Android中的多进程模式</h4><h5 id="开启多进程模式"><a href="#开启多进程模式" class="headerlink" title="开启多进程模式"></a>开启多进程模式</h5><p>在Android中使用多线程只有一种方法：给四大组件在Manifest中指定 android:process 属性。这个属性的值就是进程名。这意味着不能在运行时指定一个线程所在的进程。</p>
+<h4><span id="android中的多进程模式">Android中的多进程模式</span></h4><h5><span id="开启多进程模式">开启多进程模式</span></h5><p>在Android中使用多线程只有一种方法：给四大组件在Manifest中指定 android:process 属性。这个属性的值就是进程名。这意味着不能在运行时指定一个线程所在的进程。</p>
 <p>tips：使用 adb shell ps 或 adb shell ps|grep 包名 查看当前所存在的进程信息。</p>
 <p>两种进程命名方式的区别</p>
 <ol>
 <li>“：remote”<br>“：”的含义是指在当前的进程名前面附加上当前的包名，完整的进程名为“com.example.c2.remote”。这种进程属于当前应用的私有进程，其他应用的组件不可以和它跑在同一个进程中。</li>
 <li>“com.example.c2.remote”<br>这是一种完整的命名方式。这种进程属于全局进程，其他应用可以通过ShareUID方式和它跑在同一个进程中。</li>
 </ol>
-<h5 id="多线程模式的运行机制"><a href="#多线程模式的运行机制" class="headerlink" title="多线程模式的运行机制"></a>多线程模式的运行机制</h5><p>Android为每个进程都分配了一个独立的虚拟机，不同虚拟机在内存分配上有不同的地址空间，导致不同的虚拟机访问同一个类的对象会产生多份副本。例如不同进程的Activity对静态变量的修改，对其他进程不会造成任何影响。所有运行在不同进程的四大组件，只要它们之间需要通过内存在共享数据，都会共享失败。四大组件之间不可能不通过中间层来共享数据。</p>
+<h5><span id="多线程模式的运行机制">多线程模式的运行机制</span></h5><p>Android为每个进程都分配了一个独立的虚拟机，不同虚拟机在内存分配上有不同的地址空间，导致不同的虚拟机访问同一个类的对象会产生多份副本。例如不同进程的Activity对静态变量的修改，对其他进程不会造成任何影响。所有运行在不同进程的四大组件，只要它们之间需要通过内存在共享数据，都会共享失败。四大组件之间不可能不通过中间层来共享数据。</p>
 <p>多进程会带来以下问题：</p>
 <ol>
 <li>静态成员和单例模式完全失效。</li>
@@ -352,13 +352,13 @@
 <li>基于Binder的Messenger和AIDL。</li>
 <li>Socket等</li>
 </ol>
-<h4 id="IPC基础概念介绍"><a href="#IPC基础概念介绍" class="headerlink" title="IPC基础概念介绍"></a>IPC基础概念介绍</h4><p>主要介绍 Serializable 、 Parcelable 、 Binder 。Serializable和Parcelable接口可以完成对象的序列化过程，我们通过Intent和Binder传输数据时就需要Parcelabel和Serializable。还有的时候我们需要对象持久化到存储设备上或者通过网络传输到其他客户端，也需要Serializable完成对象持久化。</p>
-<h5 id="Serializable接口"><a href="#Serializable接口" class="headerlink" title="Serializable接口"></a>Serializable接口</h5><p>Serializable 是Java提供的一个序列化接口（ 空接口） ，为对象提供标准的序列化和反序列化操作。只需要一个类去实现 Serializable 接口并声明一个 serialVersionUID 即可实现序列化。</p>
+<h4><span id="ipc基础概念介绍">IPC基础概念介绍</span></h4><p>主要介绍 Serializable 、 Parcelable 、 Binder 。Serializable和Parcelable接口可以完成对象的序列化过程，我们通过Intent和Binder传输数据时就需要Parcelabel和Serializable。还有的时候我们需要对象持久化到存储设备上或者通过网络传输到其他客户端，也需要Serializable完成对象持久化。</p>
+<h5><span id="serializable接口">Serializable接口</span></h5><p>Serializable 是Java提供的一个序列化接口（ 空接口） ，为对象提供标准的序列化和反序列化操作。只需要一个类去实现 Serializable 接口并声明一个 serialVersionUID 即可实现序列化。</p>
 <pre><code>private static final long serialVersionUID = 8711368828010083044L
 </code></pre><p>serialVersionUID也可以不声明。如果不手动指定 serialVersionUID 的值，反序列化时如果当前类有所改变（ 比如增删了某些成员变量） ，那么系统就会重新计算当前类的hash值并更新 serialVersionUID 。这个时候当前类的 serialVersionUID 就和序列化数据中的serialVersionUID 不一致，导致反序列化失败，程序就出现crash。</p>
 <p>静态成员变量属于类不属于对象，不参与序列化过程，其次 transient 关键字标记的成员变量也不参与序列化过程。</p>
 <p>通过重写writeObject和readObject方法可以改变系统默认的序列化过程。</p>
-<h5 id="Parcelable接口"><a href="#Parcelable接口" class="headerlink" title="Parcelable接口"></a>Parcelable接口</h5><p>Parcel内部包装了可序列化的数据，可以在Binder中自由传输。序列化过程中需要实现的功能有序列化、反序列化和内容描述。</p>
+<h5><span id="parcelable接口">Parcelable接口</span></h5><p>Parcel内部包装了可序列化的数据，可以在Binder中自由传输。序列化过程中需要实现的功能有序列化、反序列化和内容描述。</p>
 <p>序列化功能由 writeToParcel 方法完成,最终是通过 Parcel 的一系列writer方法来完成。</p>
 <pre><code>@Override
  public void writeToParcel(Parcel out, int flags) {
@@ -387,7 +387,7 @@ name = in.readString();
 return 0;
 }
 </code></pre><p>Serializable 是Java的序列化接口，使用简单但开销大，序列化和反序列化过程需要大量I/O操作。而 Parcelable 是Android中的序列化方式，适合在Android平台使用，效率高但是使用麻烦。 Parcelable 主要在内存序列化上，Parcelable 也可以将对象序列化到存储设备中或者将对象序列化后通过网络传输，但是稍显复杂，推荐使用 Serializable 。</p>
-<h5 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h5><p>Binder是Android中的一个类，实现了 IBinder 接口。从IPC角度说，Binder是Andoird的一种跨进程通讯方式，Binder还可以理解为一种虚拟物理设备，它的设备驱动是/dev/binder。从Android Framework角度来说，Binder是 ServiceManager 连接各种Manager( ActivityManager· 、 WindowManager )和相应 ManagerService 的桥梁。从Android应用层来说，Binder是客户端和服务端进行通信的媒介，当bindService时，服务端返回一个包含服务端业务调用的Binder对象，通过这个Binder对象，客户端就可以获取服务器端提供的服务或者数据（ 包括普通服务和基于AIDL的服务）。</p>
+<h5><span id="binder">Binder</span></h5><p>Binder是Android中的一个类，实现了 IBinder 接口。从IPC角度说，Binder是Andoird的一种跨进程通讯方式，Binder还可以理解为一种虚拟物理设备，它的设备驱动是/dev/binder。从Android Framework角度来说，Binder是 ServiceManager 连接各种Manager( ActivityManager· 、 WindowManager )和相应 ManagerService 的桥梁。从Android应用层来说，Binder是客户端和服务端进行通信的媒介，当bindService时，服务端返回一个包含服务端业务调用的Binder对象，通过这个Binder对象，客户端就可以获取服务器端提供的服务或者数据（ 包括普通服务和基于AIDL的服务）。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/1967257-bb024c16e0df187c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <blockquote>
 <p>Binder通信采用C/S架构，从组件视角来说，包含Client、Server、ServiceManager以及binder驱动，其中ServiceManager用于管理系统中的各种服务。</p>
@@ -661,7 +661,7 @@ binder.linkToDeath(mDeathRecipient,0);
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-IPC"><span class="nav-text">Android IPC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-IPC-简介"><span class="nav-text">Android IPC 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android中的多进程模式"><span class="nav-text">Android中的多进程模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#开启多进程模式"><span class="nav-text">开启多进程模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多线程模式的运行机制"><span class="nav-text">多线程模式的运行机制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPC基础概念介绍"><span class="nav-text">IPC基础概念介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Serializable接口"><span class="nav-text">Serializable接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Parcelable接口"><span class="nav-text">Parcelable接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Binder"><span class="nav-text">Binder</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">Android IPC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">Android IPC 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">Android中的多进程模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">开启多进程模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">多线程模式的运行机制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">IPC基础概念介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">Serializable接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">Parcelable接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">Binder</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

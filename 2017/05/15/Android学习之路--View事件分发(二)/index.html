@@ -318,7 +318,7 @@
       
 
       
-        <h3 id="View的事件分发机制"><a href="#View的事件分发机制" class="headerlink" title="View的事件分发机制"></a>View的事件分发机制</h3><h4 id="点击事件的传递规则"><a href="#点击事件的传递规则" class="headerlink" title="点击事件的传递规则"></a>点击事件的传递规则</h4><p>点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则：</p>
+        <h3><span id="view的事件分发机制">View的事件分发机制</span></h3><h4><span id="点击事件的传递规则">点击事件的传递规则</span></h4><p>点击事件是MotionEvent。首先我们先看看下面一段伪代码，通过它我们可以理解到点击事件的传递规则：</p>
 <pre><code>public boolean dispatchTouchEvent (MotionEvent ev){
 boolean consume = false;
 if (onInterceptTouchEvnet(ev){
@@ -350,18 +350,18 @@ return consume;
 <li>onClick会发生的前提是当前View是可点击的，并且收到了down和up事件。</li>
 <li>事件传递过程总是由外向内的，即事件总是先传递给父元素，然后由父元素分发给子View，通过requestDisallowInterceptTouchEvent方法可以在子元素中干预父元素的分发过程，但是ACTION_DOWN事件除外。</li>
 </ol>
-<h5 id="事件分发的源码解析"><a href="#事件分发的源码解析" class="headerlink" title="事件分发的源码解析"></a>事件分发的源码解析</h5><p>略</p>
-<h4 id="滑动冲突"><a href="#滑动冲突" class="headerlink" title="滑动冲突"></a>滑动冲突</h4><p>在界面中，只要内外两层同时可以滑动，这个时候就会产生滑动冲突。滑动冲突的解决有固定的方法。</p>
-<h5 id="常见的滑动冲突场景"><a href="#常见的滑动冲突场景" class="headerlink" title="常见的滑动冲突场景"></a>常见的滑动冲突场景</h5><p><img src="https://upload-images.jianshu.io/upload_images/1967257-12ace9e2f05b5fb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h5><span id="事件分发的源码解析">事件分发的源码解析</span></h5><p>略</p>
+<h4><span id="滑动冲突">滑动冲突</span></h4><p>在界面中，只要内外两层同时可以滑动，这个时候就会产生滑动冲突。滑动冲突的解决有固定的方法。</p>
+<h5><span id="常见的滑动冲突场景">常见的滑动冲突场景</span></h5><p><img src="https://upload-images.jianshu.io/upload_images/1967257-12ace9e2f05b5fb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <ol>
 <li>外部滑动和内部滑动方向不一致；<br>比如viewpager和listview嵌套，但这种情况下viewpager自身已经对滑动冲突进行了处理。</li>
 <li>外部滑动方向和内部滑动方向一致；</li>
 <li>上面两种情况的嵌套。<br>只要解决1和2即可。</li>
 </ol>
-<h5 id="滑动冲突的处理规则"><a href="#滑动冲突的处理规则" class="headerlink" title="滑动冲突的处理规则"></a>滑动冲突的处理规则</h5><p>对于场景一，处理的规则是：当用户左右（ 上下） 滑动时，需要让外部的View拦截点击事件，当用户上下（ 左右） 滑动的时候，需要让内部的View拦截点击事件。根据滑动的方向判断谁来拦截事件。</p>
+<h5><span id="滑动冲突的处理规则">滑动冲突的处理规则</span></h5><p>对于场景一，处理的规则是：当用户左右（ 上下） 滑动时，需要让外部的View拦截点击事件，当用户上下（ 左右） 滑动的时候，需要让内部的View拦截点击事件。根据滑动的方向判断谁来拦截事件。</p>
 <p>对于场景二，由于滑动方向一致，这时候只能在业务上找到突破点，根据业务需求，规定什么时候让外部View拦截事件，什么时候由内部View拦截事件。</p>
 <p>场景三的情况相对比较复杂，同样根据需求在业务上找到突破点。</p>
-<h5 id="滑动冲突的解决方式"><a href="#滑动冲突的解决方式" class="headerlink" title="滑动冲突的解决方式"></a>滑动冲突的解决方式</h5><p><strong>外部拦截法</strong><br>所谓外部拦截法是指点击事件都先经过父容器的拦截处理，如果父容器需要此事件就拦截，否则就不拦截。下面是伪代码：</p>
+<h5><span id="滑动冲突的解决方式">滑动冲突的解决方式</span></h5><p><strong>外部拦截法</strong><br>所谓外部拦截法是指点击事件都先经过父容器的拦截处理，如果父容器需要此事件就拦截，否则就不拦截。下面是伪代码：</p>
 <pre><code>public boolean onInterceptTouchEvent (MotionEvent event){
 boolean intercepted = false;
 int x = (int) event.getX();
@@ -641,7 +641,7 @@ return super.dispatchTouchEvent(event);
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#View的事件分发机制"><span class="nav-text">View的事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#点击事件的传递规则"><span class="nav-text">点击事件的传递规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#事件分发的源码解析"><span class="nav-text">事件分发的源码解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#滑动冲突"><span class="nav-text">滑动冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#常见的滑动冲突场景"><span class="nav-text">常见的滑动冲突场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#滑动冲突的处理规则"><span class="nav-text">滑动冲突的处理规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#滑动冲突的解决方式"><span class="nav-text">滑动冲突的解决方式</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">View的事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">点击事件的传递规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">事件分发的源码解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">滑动冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">常见的滑动冲突场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">滑动冲突的处理规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">滑动冲突的解决方式</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

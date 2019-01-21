@@ -318,7 +318,7 @@
       
 
       
-        <h3 id="四大组件的工作过程"><a href="#四大组件的工作过程" class="headerlink" title="四大组件的工作过程"></a>四大组件的工作过程</h3><h4 id="BroadcastReceiver的工作过程"><a href="#BroadcastReceiver的工作过程" class="headerlink" title="BroadcastReceiver的工作过程"></a>BroadcastReceiver的工作过程</h4><p>简单回顾一下广播的使用方法, 首先定义广播接收者, 只需要继承BroadcastReceiver并重写onReceive()方法即可. 定义好了广播接收者, 还需要注册广播接收者, 分为两种静态注册或者动态注册. 注册完成之后就可以发送广播了.</p>
+        <h3><span id="四大组件的工作过程">四大组件的工作过程</span></h3><h4><span id="broadcastreceiver的工作过程">BroadcastReceiver的工作过程</span></h4><p>简单回顾一下广播的使用方法, 首先定义广播接收者, 只需要继承BroadcastReceiver并重写onReceive()方法即可. 定义好了广播接收者, 还需要注册广播接收者, 分为两种静态注册或者动态注册. 注册完成之后就可以发送广播了.</p>
 <p>###9.4.1 广播的注册过程<br><img src="https://upload-images.jianshu.io/upload_images/1967257-2cf63d9d7d51173d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <ol>
 <li>动态注册的过程是从ContextWrapper#registerReceiver()开始的. 和Activity或者Service一样. ContextWrapper并没有做实际的工作, 而是将注册的过程直接交给了ContextImpl来完成.</li>
@@ -327,7 +327,7 @@
 <li>IIntentReceiver作为一个Binder接口, 它的具体实现是LoadedApk.ReceiverDispatcher.InnerReceiver, ReceiverDispatcher的内部同时保存了BroadcastReceiver和InnerReceiver, 这样当接收到广播的时候, ReceiverDispatcher可以很方便的调用BroadcastReceiver#onReceive()方法. 这里和Service很像有同样的类, 并且内部类中同样也是一个Binder接口.</li>
 <li>由于注册广播真正实现过程是在AMS中, 因此跟进AMS中, 首先看registerReceiver()方法, 这里只关心里面的核心部分. 这段代码最终会把远程的InnerReceiver对象以及IntentFilter对象存储起来, 这样整个广播的注册就完成了.</li>
 </ol>
-<h5 id="广播的发送和接收过程"><a href="#广播的发送和接收过程" class="headerlink" title="广播的发送和接收过程"></a>广播的发送和接收过程</h5><p><img src="https://upload-images.jianshu.io/upload_images/1967257-00d1a61663661a21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>广播的发送有几种：普通广播、有序广播和粘性广播，他们的发送/接收流程是类似的，因此<br>只分析普通广播的实现。</p>
+<h5><span id="广播的发送和接收过程">广播的发送和接收过程</span></h5><p><img src="https://upload-images.jianshu.io/upload_images/1967257-00d1a61663661a21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>广播的发送有几种：普通广播、有序广播和粘性广播，他们的发送/接收流程是类似的，因此<br>只分析普通广播的实现。</p>
 <ol>
 <li>广播的发送和接收, 本质就是一个过程的两个阶段. 广播的发送仍然开始于ContextImpl#sendBroadcase()方法, 之所以不是Context, 那是因为Context#sendBroad()是一个抽象方法. 和广播的注册过程一样, ContextWrapper#sendBroadcast()仍然什么都不做, 只是把事情交给了ContextImpl去处理.</li>
 <li>ContextImpl里面也几乎什么都没有做, 内部直接向AMS发起了一个异步请求用于发送广播.</li>
@@ -568,7 +568,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#四大组件的工作过程"><span class="nav-text">四大组件的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BroadcastReceiver的工作过程"><span class="nav-text">BroadcastReceiver的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#广播的发送和接收过程"><span class="nav-text">广播的发送和接收过程</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">四大组件的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">BroadcastReceiver的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">广播的发送和接收过程</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

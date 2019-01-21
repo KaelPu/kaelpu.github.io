@@ -319,7 +319,7 @@
       
 
       
-        <h3 id="Activity-的生命周期和启动模式"><a href="#Activity-的生命周期和启动模式" class="headerlink" title="Activity 的生命周期和启动模式"></a>Activity 的生命周期和启动模式</h3><h4 id="Activity的生命周期"><a href="#Activity的生命周期" class="headerlink" title="Activity的生命周期"></a>Activity的生命周期</h4><p><img src="http://upload-images.jianshu.io/upload_images/1967257-e11df06aa2630194.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="Paste_Image.png"></p>
+        <h3><span id="activity-的生命周期和启动模式">Activity 的生命周期和启动模式</span></h3><h4><span id="activity的生命周期">Activity的生命周期</span></h4><p><img src="http://upload-images.jianshu.io/upload_images/1967257-e11df06aa2630194.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="Paste_Image.png"></p>
 <ul>
 <li>onCreate - 构建Activity</li>
 <li>onRestart - Activity在重启,一般来说Activity恢复时在onStop后执行</li>
@@ -350,7 +350,7 @@
 </li>
 </ol>
 <hr>
-<h4 id="Activity-启动模式"><a href="#Activity-启动模式" class="headerlink" title="Activity 启动模式"></a>Activity 启动模式</h4><p>Activity有四种启动模式，这四种启动模式决定了Activity是否需要重新创建还是复用之前已有的对象。这些已存在的对象会被放进任务栈中被管理。系统可以有多个任务栈。</p>
+<h4><span id="activity-启动模式">Activity 启动模式</span></h4><p>Activity有四种启动模式，这四种启动模式决定了Activity是否需要重新创建还是复用之前已有的对象。这些已存在的对象会被放进任务栈中被管理。系统可以有多个任务栈。</p>
 <ul>
 <li>standard - <em>标准模式</em> 该模式很简单，系统每启动一个Activity都会创建一个新的对象，谁启动了该Activity它就会被加入到启动者的任务栈中。<strong>这里需要注意由于ApplicationContext是不包含任务栈的，所以启动标准模式的Activity时会报错。</strong>解决这个问题的办法就是给Activity加上FLAG_ACTIVITY_NEW_TASK标记，其实这就是singleTask启动模式，<strong>这里注意给XML添加singleTask模式也不能解决该错误，必须代码添加</strong>后面我们会介绍。<br>-</li>
 <li>singleTop - 栈顶复用。在这种模式下如果当前任务栈中栈顶存在Activity对象，则会直接复用该对象，并且直接调用该对象的onNewIntent函数，然而方法的参数Intent对象中可取出当前请求的信息。<strong>但是需要注意这个时候onCreate onStart生命周期不会被调用</strong>因为Activity并没有被重新创建。<br>-</li>
@@ -366,7 +366,7 @@
 <p>至于怎么创建新的任务栈我们可以在xml中配置TaskAffinity属性注意该属性只和singleTask模式搭配才有效。仔细结合上面的思考一下为什么？查看任务栈情况可以使用如下命令，红色框就是不同栈，蓝色框是Activity名。<br><code>adb shell dumpsys activity</code></p>
 <p><img src="http://upload-images.jianshu.io/upload_images/1967257-008e83394ce5cbb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="Paste_Image.png"></p>
 <hr>
-<h4 id="IntentFilter的匹配规则"><a href="#IntentFilter的匹配规则" class="headerlink" title="IntentFilter的匹配规则"></a>IntentFilter的匹配规则</h4><p>启动Activity有两种方式一种显示调用，一种隐式调用。显示调用很简单，只需要指定包名和类名即可，而隐式调用需要明确的指定出组件的信息。原则上说一个Intent不应该既包含显示调用又包含隐式调用，如果两个都包含，则会以显示调用为主。这里我们主要介绍一下隐式调用。隐式调用需要Intent能够匹配所有目标组件的IntentFilter中所设置的过滤信息，如果不匹配就无法启动。IntentFilter中过滤信息有三种action、category、data。</p>
+<h4><span id="intentfilter的匹配规则">IntentFilter的匹配规则</span></h4><p>启动Activity有两种方式一种显示调用，一种隐式调用。显示调用很简单，只需要指定包名和类名即可，而隐式调用需要明确的指定出组件的信息。原则上说一个Intent不应该既包含显示调用又包含隐式调用，如果两个都包含，则会以显示调用为主。这里我们主要介绍一下隐式调用。隐式调用需要Intent能够匹配所有目标组件的IntentFilter中所设置的过滤信息，如果不匹配就无法启动。IntentFilter中过滤信息有三种action、category、data。</p>
 <ul>
 <li>action - Intent中的action必须和组件过滤规则中的其中一个action相同，换句话说Intent可以有好几个action，只要组件配了其中一个action即可匹配</li>
 <li>category - Intent中的所有category必须在组件过滤规则中都存在</li>
@@ -589,7 +589,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Activity-的生命周期和启动模式"><span class="nav-text">Activity 的生命周期和启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity的生命周期"><span class="nav-text">Activity的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-启动模式"><span class="nav-text">Activity 启动模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IntentFilter的匹配规则"><span class="nav-text">IntentFilter的匹配规则</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">Activity 的生命周期和启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">Activity的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">Activity 启动模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">IntentFilter的匹配规则</span></a></li></ol></li></ol></div>
             
 
           </div>

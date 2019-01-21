@@ -315,18 +315,18 @@
       
 
       
-        <h3 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h3><h4 id="自定义View"><a href="#自定义View" class="headerlink" title="自定义View"></a>自定义View</h4><h5 id="自定义View的分类"><a href="#自定义View的分类" class="headerlink" title="自定义View的分类"></a>自定义View的分类</h5><p><strong>继承View 重写onDraw方法</strong><br>通过 onDraw 方法来实现一些不规则的效果，这种效果不方便通过布局的组合方式来达到。这种方式需要自己支持 wrap_content ，并且padding也要去进行处理。</p>
+        <h3><span id="view的工作原理">View的工作原理</span></h3><h4><span id="自定义view">自定义View</span></h4><h5><span id="自定义view的分类">自定义View的分类</span></h5><p><strong>继承View 重写onDraw方法</strong><br>通过 onDraw 方法来实现一些不规则的效果，这种效果不方便通过布局的组合方式来达到。这种方式需要自己支持 wrap_content ，并且padding也要去进行处理。</p>
 <p><strong>继承ViewGroup派生特殊的layout</strong><br>实现自定义的布局方式，需要合适地处理ViewGroup的测量、布局这两个过程，并同时处理子View的测量和布局过程。</p>
 <p><strong>继承特定的View子类（ 如TextView、Button）</strong><br>扩展某种已有的控件的功能，比较简单，不需要自己去管理 wrap_content 和padding。</p>
 <p><strong> 继承特定的ViewGroup子类（ 如LinearLayout）</strong><br>比较常见，实现几种view组合一起的效果。与方法二的差别是方法二更接近底层实现。</p>
-<h5 id="自定义View须知"><a href="#自定义View须知" class="headerlink" title="自定义View须知"></a>自定义View须知</h5><ol>
+<h5><span id="自定义view须知">自定义View须知</span></h5><ol>
 <li>直接继承View或ViewGroup的控件， 需要在onmeasure中对wrap_content做特殊处理。指定wrap_content模式下的默认宽/高。</li>
 <li>直接继承View的控件，如果不在draw方法中处理padding，那么padding属性就无法起作用。直接继承ViewGroup的控件也需要在onMeasure和onLayout中考虑padding和子元素margin的影响，不然padding和子元素的margin无效。</li>
 <li>尽量不要用在View中使用Handler，因为没必要。View内部提供了post系列的方法，完全可以替代Handler的作用。</li>
 <li>View中有线程和动画，需要在View的onDetachedFromWindow中停止。当View不可见时，也需要停止线程和动画，否则可能造成内存泄漏。</li>
 <li>View带有滑动嵌套情形时，需要处理好滑动冲突</li>
 </ol>
-<h5 id="自定义View实例"><a href="#自定义View实例" class="headerlink" title="自定义View实例"></a>自定义View实例</h5><ul>
+<h5><span id="自定义view实例">自定义View实例</span></h5><ul>
 <li>继承View重写onDraw方法：<a href="https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_4/src/com/ryg/chapter_4/ui/CircleView.java" target="_blank" rel="noopener">CircleView</a></li>
 </ul>
 <blockquote>
@@ -368,7 +368,7 @@ android:orientation=&quot;vertical&quot; &gt;
 <ul>
 <li>继承ViewGroup派生特殊的layout：<a href="https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_4/src/com/ryg/chapter_4/ui/HorizontalScrollViewEx.java" target="_blank" rel="noopener">HorizontalScrollViewEx</a><br>onMeasure方法中，首先判断是否有子元素，没有的话根据LayoutParams中的宽高做相应处理。然后判断宽高是不是wrap_content，如果宽是，那么HorizontalScrollViewEx的宽就是所有所有子元素的宽度之和。如果高是wrap_content，HorizontalScrollViewEx的高度就是第一个子元素的高度。同时要处理padding和margin。<br>onLayout方法中，在放置子元素时候也要考虑padding和margin。</li>
 </ul>
-<h5 id="自定义View的思想"><a href="#自定义View的思想" class="headerlink" title="自定义View的思想"></a>自定义View的思想</h5><ul>
+<h5><span id="自定义view的思想">自定义View的思想</span></h5><ul>
 <li>掌握基本功，比如View的弹性滑动、滑动冲突、绘制原理等</li>
 <li>面对新的自定义View时，对其分类并选择合适的实现思路。</li>
 </ul>
@@ -584,7 +584,7 @@ android:orientation=&quot;vertical&quot; &gt;
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#View的工作原理"><span class="nav-text">View的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义View"><span class="nav-text">自定义View</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义View的分类"><span class="nav-text">自定义View的分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义View须知"><span class="nav-text">自定义View须知</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义View实例"><span class="nav-text">自定义View实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义View的思想"><span class="nav-text">自定义View的思想</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">View的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">自定义View</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">自定义View的分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">自定义View须知</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">自定义View实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">自定义View的思想</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

@@ -319,14 +319,14 @@
       
 
       
-        <h3 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h3><p>主要内容</p>
+        <h3><span id="view的工作原理">View的工作原理</span></h3><p>主要内容</p>
 <ul>
 <li>View的工作原理</li>
 <li>自定义View的实现方式</li>
 <li>自定义View的底层工作原理，比如View的测量流程、布局流程、绘制流程</li>
 <li>View常见的回调方法，比如构造方法、onAttach.onVisibilityChanged/onDetach等</li>
 </ul>
-<h4 id="初识ViewRoot和DecorView"><a href="#初识ViewRoot和DecorView" class="headerlink" title="初识ViewRoot和DecorView"></a>初识ViewRoot和DecorView</h4><p>ViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和DecorView的纽带，View的三大流程（ mearsure、layout、draw） 均是通过ViewRoot来完成。当Activity对象被创建完毕后，会将DecorView添加到Window中，同时创建 ViewRootImpl 对象，并将ViewRootImpl 对象和DecorView建立连接，源码如下：</p>
+<h4><span id="初识viewroot和decorview">初识ViewRoot和DecorView</span></h4><p>ViewRoot的实现是 ViewRootImpl 类，是连接WindowManager和DecorView的纽带，View的三大流程（ mearsure、layout、draw） 均是通过ViewRoot来完成。当Activity对象被创建完毕后，会将DecorView添加到Window中，同时创建 ViewRootImpl 对象，并将ViewRootImpl 对象和DecorView建立连接，源码如下：</p>
 <pre><code>root = new ViewRootImpl(view.getContext(),display);
 root.setView(view,wparams, panelParentView);
 </code></pre><p>View的绘制流程是从ViewRoot的performTraversals开始的<br><img src="https://upload-images.jianshu.io/upload_images/1967257-f245ffbefe056fb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
@@ -342,14 +342,14 @@ root.setView(view,wparams, panelParentView);
 </ul>
 <p>DecorView作为顶级View，其实是一个 FrameLayout ，它包含一个竖直方向的 LinearLayout ，这个 LinearLayout 分为标题栏和内容栏两个部分。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-a52532aa98246bae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>在Activity通过setContextView所设置的布局文件其实就是被加载到内容栏之中的。这个内容栏的id是 R.android.id.content ，通过 <code>`</code> ViewGroup content = findViewById(R.android.id.content);<br>可以得到这个contentView。View层的事件都是先经过DecorView，然后才传递到子View。</p>
-<h4 id="理解MeasureSpec"><a href="#理解MeasureSpec" class="headerlink" title="理解MeasureSpec"></a>理解MeasureSpec</h4><p>MeasureSpec决定了一个View的尺寸规格。但是父容器会影响View的MeasureSpec的创建过程。系统将View的 LayoutParams 根据父容器所施加的规则转换成对应的MeasureSpec，然后根据这个MeasureSpec来测量出View的宽高。</p>
-<h5 id="MeasureSpec"><a href="#MeasureSpec" class="headerlink" title="MeasureSpec"></a>MeasureSpec</h5><p>MeasureSpec代表一个32位int值，高2位代表SpecMode（ 测量模式） ，低30位代表SpecSize（ 在某个测量模式下的规格大小） 。<br>SpecMode有三种：</p>
+<h4><span id="理解measurespec">理解MeasureSpec</span></h4><p>MeasureSpec决定了一个View的尺寸规格。但是父容器会影响View的MeasureSpec的创建过程。系统将View的 LayoutParams 根据父容器所施加的规则转换成对应的MeasureSpec，然后根据这个MeasureSpec来测量出View的宽高。</p>
+<h5><span id="measurespec">MeasureSpec</span></h5><p>MeasureSpec代表一个32位int值，高2位代表SpecMode（ 测量模式） ，低30位代表SpecSize（ 在某个测量模式下的规格大小） 。<br>SpecMode有三种：</p>
 <ul>
 <li>UNSPECIFIED ：父容器不对View进行任何限制，要多大给多大，一般用于系统内部</li>
 <li>EXACTLY：父容器检测到View所需要的精确大小，这时候View的最终大小就是SpecSize所指定的值，对应LayoutParams中的 match_parent 和具体数值这两种模式</li>
 <li>AT_MOST ：对应View的默认大小，不同View实现不同，View的大小不能大于父容器的SpecSize，对应 LayoutParams 中的 wrap_content</li>
 </ul>
-<h5 id="MeasureSpec和LayoutParams的对应关系"><a href="#MeasureSpec和LayoutParams的对应关系" class="headerlink" title="MeasureSpec和LayoutParams的对应关系"></a>MeasureSpec和LayoutParams的对应关系</h5><p>对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定。而View的MeasureSpec由父容器的MeasureSpec和自身的LayoutParams共同决定。</p>
+<h5><span id="measurespec和layoutparams的对应关系">MeasureSpec和LayoutParams的对应关系</span></h5><p>对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定。而View的MeasureSpec由父容器的MeasureSpec和自身的LayoutParams共同决定。</p>
 <p>View的measure过程由ViewGroup传递而来，参考ViewGroup的 measureChildWithMargins 方法，通过调用子元素的 getChildMeasureSpec 方法来得到子元素的MeasureSpec，再调用子元素的 measure 方法。<br><img src="https://upload-images.jianshu.io/upload_images/1967257-c50ccd20a316e977.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>parentSize是指父容器中目前可使用的大小。</p>
 <ol>
 <li>当View采用固定宽/高时（ 即设置固定的dp/px） ,不管父容器的MeasureSpec是什么，View的MeasureSpec都是EXACTLY模式，并且大小遵循我们设置的值。</li>
@@ -357,7 +357,7 @@ root.setView(view,wparams, panelParentView);
 <li>当View的宽/高是 wrap_content 时，View的MeasureSpec都是AT_MOST模式并且其大小不能超过父容器的剩余空间。</li>
 <li>父容器的UNSPECIFIED模式，一般用于系统内部多次Measure时，表示一种测量的状态，一般来说我们不需要关注此模式。</li>
 </ol>
-<h4 id="View的工作流程"><a href="#View的工作流程" class="headerlink" title="View的工作流程"></a>View的工作流程</h4><h5 id="measure过程"><a href="#measure过程" class="headerlink" title="measure过程"></a>measure过程</h5><p><strong>View的measure过程</strong></p>
+<h4><span id="view的工作流程">View的工作流程</span></h4><h5><span id="measure过程">measure过程</span></h5><p><strong>View的measure过程</strong></p>
 <p>直接继承View的自定义控件需要重写 onMeasure 方法并设置 wrap_content （ 即specMode是 AT_MOST 模式） 时的自身大小，否则在布局中使用 wrap_content 相当于使用 match_parent 。对于非 wrap_content 的情形，我们沿用系统的测量值即可。</p>
 <pre><code>  @Override
 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -412,7 +412,7 @@ view.measure(widthMeasureSpec,heightMeasureSpec);
 </ul>
 </li>
 </ol>
-<h5 id="layout过程"><a href="#layout过程" class="headerlink" title="layout过程"></a>layout过程</h5><p>layout的作用是ViewGroup用来确定子View的位置，当ViewGroup的位置被确定后，它会在onLayout中遍历所有的子View并调用其layout方法，在 layout 方法中， onLayout 方法又会被调用。</p>
+<h5><span id="layout过程">layout过程</span></h5><p>layout的作用是ViewGroup用来确定子View的位置，当ViewGroup的位置被确定后，它会在onLayout中遍历所有的子View并调用其layout方法，在 layout 方法中， onLayout 方法又会被调用。</p>
 <p>View的 layout 方法确定本身的位置，源码流程如下： </p>
 <ol>
 <li>setFrame 确定View的四个顶点位置，即确定了View在父容器中的位置</li>
@@ -424,7 +424,7 @@ view.measure(widthMeasureSpec,heightMeasureSpec);
 <li>setChildFrame 方法实际上调用了子View的 layout 方法，形成了递归</li>
 </ol>
 <p>==View的测量宽高和最终宽高的区别：==<br>在View的默认实现中，View的测量宽高和最终宽高相等，只不过测量宽高形成于measure过程，最终宽高形成于layout过程。但重写view的layout方法可以使他们不相等。</p>
-<h5 id="draw过程"><a href="#draw过程" class="headerlink" title="draw过程"></a>draw过程</h5><p>View的绘制过程遵循如下几步：</p>
+<h5><span id="draw过程">draw过程</span></h5><p>View的绘制过程遵循如下几步：</p>
 <ol>
 <li>绘制背景 drawBackground(canvas)</li>
 <li>绘制自己 onDraw</li>
@@ -644,7 +644,7 @@ view.measure(widthMeasureSpec,heightMeasureSpec);
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#View的工作原理"><span class="nav-text">View的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初识ViewRoot和DecorView"><span class="nav-text">初识ViewRoot和DecorView</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#理解MeasureSpec"><span class="nav-text">理解MeasureSpec</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MeasureSpec"><span class="nav-text">MeasureSpec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MeasureSpec和LayoutParams的对应关系"><span class="nav-text">MeasureSpec和LayoutParams的对应关系</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#View的工作流程"><span class="nav-text">View的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#measure过程"><span class="nav-text">measure过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#layout过程"><span class="nav-text">layout过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#draw过程"><span class="nav-text">draw过程</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-text">View的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">初识ViewRoot和DecorView</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">理解MeasureSpec</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">MeasureSpec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">MeasureSpec和LayoutParams的对应关系</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-text">View的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">measure过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">layout过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undefined"><span class="nav-text">draw过程</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
